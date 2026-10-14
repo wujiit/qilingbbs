@@ -73,7 +73,7 @@
                 if (typeof qibbsCommunity !== 'undefined' && qibbsCommunity.showLoginModal) {
                     qibbsCommunity.showLoginModal();
                 } else {
-                    alert(qibbsData.strings.loginRequired || '请先登录');
+                    self.showToast(qibbsData.strings.loginRequired || '请先登录', 'warning');
                 }
                 return;
             }
@@ -195,7 +195,7 @@
             $('#qibbs-submit-pay-btn').off('click').on('click', function() {
                 const selectedGw = $('input[name="qibbs_pay_gateway"]:checked').val();
                 if (!selectedGw) {
-                    alert('请选择支付方式');
+                    self.showToast('请选择支付方式', 'warning');
                     return;
                 }
 
@@ -218,7 +218,7 @@
                         error: function(xhr) {
                             $btn.prop('disabled', false).text('立即支付');
                             const msg = xhr.responseJSON ? xhr.responseJSON.message : '兑换失败，请检查积分余额';
-                            alert(msg);
+                            self.showToast(msg, 'error');
                         }
                     });
                     return;
@@ -240,7 +240,7 @@
                     success: function(res) {
                         if (!res || !res.success) {
                             $btn.prop('disabled', false).text('立即支付');
-                            alert(res.message || '创建订单失败');
+                            self.showToast(res && res.message ? res.message : '创建订单失败', 'error');
                             return;
                         }
 
@@ -282,7 +282,7 @@
                     error: function(xhr) {
                         $btn.prop('disabled', false).text('立即支付');
                         const msg = xhr.responseJSON ? xhr.responseJSON.message : '创建订单失败，请稍后重试';
-                        alert(msg);
+                        self.showToast(msg, 'error');
                     }
                 });
             });
@@ -333,14 +333,14 @@
                     xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
                 },
                 success: function(res) {
-                    alert('佩戴成功！当前社区对外展示主号已更新为 UID: ' + cuid);
+                    self.showToast('佩戴成功！当前社区对外展示主号已更新为 UID: ' + cuid, 'success');
                     self.closeModal();
                     // 局部动态刷新页面上的个人 UID 标识
                     $('.qibbs-current-cuid-val').text(cuid);
                 },
                 error: function(xhr) {
                     const msg = xhr.responseJSON ? xhr.responseJSON.message : '佩戴失败';
-                    alert(msg);
+                    self.showToast(msg, 'error');
                 }
             });
         },
@@ -435,61 +435,101 @@
                     // 绑定挂牌寄售操作
                     $('.qibbs-bp-list-btn').on('click', function() {
                         const cuid = $(this).data('cuid');
-                        const priceCashStr = prompt('【挂牌寄售】请输入靓号 ' + cuid + ' 的现金售价 (人民币/元，0为不设现金价):', '10.00');
-                        if (priceCashStr === null) return;
-                        const pricePointsStr = prompt('【挂牌寄售】请输入靓号 ' + cuid + ' 的积分售价 (0为不设积分价):', '0');
-                        if (pricePointsStr === null) return;
-
-                        const priceCash = parseFloat(priceCashStr) || 0;
-                        const pricePoints = parseInt(pricePointsStr, 10) || 0;
-
-                        if (priceCash <= 0 && pricePoints <= 0) {
-                            alert('现金售价或积分售价必须至少设置一项！');
+                        if (window.QibbsVanityMall && typeof window.QibbsVanityMall.openListModal === 'function' && $('#qibbs-c2c-list-modal').length) {
+                            self.closeModal();
+                            window.QibbsVanityMall.openListModal(cuid, '靓号', 1);
                             return;
                         }
 
-                        $.ajax({
-                            url: qibbsData.restUrl + 'c2c/list',
-                            method: 'POST',
-                            data: {
-                                cuid: cuid,
-                                price_cash: priceCash,
-                                price_points: pricePoints
-                            },
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
-                            },
-                            success: function(resp) {
-                                alert(resp.message || '挂牌成功！号码已进入交易行寄售大厅。');
-                                self.openBackpack();
-                            },
-                            error: function(xhr) {
-                                alert(xhr.responseJSON ? xhr.responseJSON.message : '挂牌失败');
+                        // 独立收银台页面的自定义挂牌弹窗
+                        $('#qibbs-pay-list-modal').remove();
+                        const listModalHtml = `
+                            <div id="qibbs-pay-list-modal" class="qibbs-pay-modal-wrap" style="z-index:999999;">
+                                <div class="qibbs-pay-modal-backdrop"></div>
+                                <div class="qibbs-pay-modal-dialog" style="max-width:440px;">
+                                    <div class="qibbs-pay-modal-header">
+                                        <h3 class="qibbs-pay-modal-title">挂牌寄售 UID: ${cuid}</h3>
+                                        <button type="button" class="qibbs-pay-modal-close" data-action="cancel">&times;</button>
+                                    </div>
+                                    <div class="qibbs-pay-modal-body" style="padding:20px;">
+                                        <div style="margin-bottom:14px;">
+                                            <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#334155;">现金售价（元，选填）：</label>
+                                            <input type="number" id="qibbs-pay-list-cash" min="0" step="0.01" placeholder="0.00" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;box-sizing:border-box;" value="10.00">
+                                        </div>
+                                        <div style="margin-bottom:14px;">
+                                            <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#334155;">积分售价（选填）：</label>
+                                            <input type="number" id="qibbs-pay-list-points" min="0" step="1" placeholder="0" style="width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:6px;box-sizing:border-box;" value="0">
+                                        </div>
+                                        <p style="font-size:12px;color:#64748b;margin:0;">提示：现金或积分至少需设置一项。上架后号码进入交易大厅展示。</p>
+                                    </div>
+                                    <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid #e2e8f0;background:#f8fafc;">
+                                        <button type="button" class="qibbs-btn qibbs-btn-default" data-action="cancel">取消</button>
+                                        <button type="button" class="qibbs-btn qibbs-btn-success" id="qibbs-pay-submit-list-btn">确认上架</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        const $listModal = $(listModalHtml).appendTo('body');
+                        $listModal.find('[data-action="cancel"], .qibbs-pay-modal-backdrop').on('click', function() {
+                            $listModal.remove();
+                        });
+                        $('#qibbs-pay-submit-list-btn').on('click', function() {
+                            const priceCash = parseFloat($('#qibbs-pay-list-cash').val()) || 0;
+                            const pricePoints = parseInt($('#qibbs-pay-list-points').val(), 10) || 0;
+                            if (priceCash <= 0 && pricePoints <= 0) {
+                                self.showToast('现金售价或积分售价必须至少设置一项', 'warning');
+                                return;
                             }
+                            $listModal.remove();
+                            $.ajax({
+                                url: qibbsData.restUrl + 'c2c/list',
+                                method: 'POST',
+                                data: {
+                                    cuid: cuid,
+                                    price_cash: priceCash,
+                                    price_points: pricePoints
+                                },
+                                beforeSend: function(xhr) {
+                                    xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
+                                },
+                                success: function(resp) {
+                                    self.showToast(resp.message || '挂牌成功！号码已进入交易行寄售大厅。', 'success');
+                                    self.openBackpack();
+                                },
+                                error: function(xhr) {
+                                    self.showToast(xhr.responseJSON ? xhr.responseJSON.message : '挂牌失败', 'error');
+                                }
+                            });
                         });
                     });
 
                     // 绑定下架撤单操作
                     $('.qibbs-bp-delist-btn').on('click', function() {
                         const cuid = $(this).data('cuid');
-                        if (!confirm('确认下架撤单靓号 ' + cuid + '？下架后号码将退回背包可正常佩戴。')) {
-                            return;
-                        }
+                        self.showConfirm({
+                            title: '下架撤单',
+                            message: '确认下架撤单靓号 ' + cuid + '？下架后号码将退回背包可正常佩戴。',
+                            confirmText: '确认下架',
+                            cancelText: '取消',
+                            type: 'warning'
+                        }, function(confirmed) {
+                            if (!confirmed) return;
 
-                        $.ajax({
-                            url: qibbsData.restUrl + 'c2c/delist',
-                            method: 'POST',
-                            data: { cuid: cuid },
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
-                            },
-                            success: function(resp) {
-                                alert(resp.message || '撤单下架成功！号码已恢复持有状态。');
-                                self.openBackpack();
-                            },
-                            error: function(xhr) {
-                                alert(xhr.responseJSON ? xhr.responseJSON.message : '下架失败');
-                            }
+                            $.ajax({
+                                url: qibbsData.restUrl + 'c2c/delist',
+                                method: 'POST',
+                                data: { cuid: cuid },
+                                beforeSend: function(xhr) {
+                                    xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
+                                },
+                                success: function(resp) {
+                                    self.showToast(resp.message || '撤单下架成功！号码已恢复持有状态。', 'success');
+                                    self.openBackpack();
+                                },
+                                error: function(xhr) {
+                                    self.showToast(xhr.responseJSON ? xhr.responseJSON.message : '下架失败', 'error');
+                                }
+                            });
                         });
                     });
 
@@ -505,28 +545,34 @@
                             },
                             success: function(q) {
                                 const quoteStr = q.payout_type === 'balance' ? ('¥' + parseFloat(q.refund_cash).toFixed(2)) : (q.refund_points + ' 积分');
-                                if (!confirm('【官方回购变现】系统折价预估返还金额: ' + quoteStr + '\n\n确认立即将靓号 ' + cuid + ' 回售给官方池吗？回售后号码将解除绑定。')) {
-                                    return;
-                                }
+                                self.showConfirm({
+                                    title: '官方回购变现',
+                                    message: '【官方回购变现】系统折价预估返还金额: ' + quoteStr + '。\n确认立即将靓号 ' + cuid + ' 回售给官方池吗？回售后号码将解除绑定。',
+                                    confirmText: '确认回售',
+                                    cancelText: '考虑一下',
+                                    type: 'danger'
+                                }, function(confirmed) {
+                                    if (!confirmed) return;
 
-                                $.ajax({
-                                    url: qibbsData.restUrl + 'c2c/recycle',
-                                    method: 'POST',
-                                    data: { cuid: cuid },
-                                    beforeSend: function(xhr) {
-                                        xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
-                                    },
-                                    success: function(resp) {
-                                        alert(resp.message || '回售变现成功！');
-                                        self.openBackpack();
-                                    },
-                                    error: function(xhr) {
-                                        alert(xhr.responseJSON ? xhr.responseJSON.message : '回售失败');
-                                    }
+                                    $.ajax({
+                                        url: qibbsData.restUrl + 'c2c/recycle',
+                                        method: 'POST',
+                                        data: { cuid: cuid },
+                                        beforeSend: function(xhr) {
+                                            xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
+                                        },
+                                        success: function(resp) {
+                                            self.showToast(resp.message || '回售变现成功！', 'success');
+                                            self.openBackpack();
+                                        },
+                                        error: function(xhr) {
+                                            self.showToast(xhr.responseJSON ? xhr.responseJSON.message : '回售失败', 'error');
+                                        }
+                                    });
                                 });
                             },
                             error: function(xhr) {
-                                alert(xhr.responseJSON ? xhr.responseJSON.message : '获取回收估价失败');
+                                self.showToast(xhr.responseJSON ? xhr.responseJSON.message : '获取回收估价失败', 'error');
                             }
                         });
                     });
@@ -544,6 +590,81 @@
                 this.activePollTimer = null;
             }
             $('#qibbs-checkout-modal, #qibbs-backpack-modal').remove();
+        },
+
+        showToast: function(msg, type) {
+            if (window.QibbsVanityMall && typeof window.QibbsVanityMall.showToast === 'function') {
+                window.QibbsVanityMall.showToast(msg, type);
+                return;
+            }
+            if (window.qibbsCommunity && typeof window.qibbsCommunity.showToast === 'function') {
+                window.qibbsCommunity.showToast(msg, type);
+                return;
+            }
+            type = type || 'info';
+            let $toast = $('#qibbs-payment-toast');
+            if (!$toast.length) {
+                $toast = $('<div id="qibbs-payment-toast" class="qibbs-vanity-toast"></div>').appendTo('body');
+            }
+            $toast.removeClass('is-success is-error is-warning is-info')
+                .addClass('is-' + type)
+                .html('<span>' + $('<div>').text(msg).html() + '</span>')
+                .stop(true, true)
+                .fadeIn(200);
+            clearTimeout(this.toastTimer);
+            this.toastTimer = setTimeout(function() {
+                $toast.fadeOut(300);
+            }, 3200);
+        },
+
+        showConfirm: function(options, callback) {
+            if (window.QibbsVanityMall && typeof window.QibbsVanityMall.showConfirm === 'function') {
+                window.QibbsVanityMall.showConfirm(options, callback);
+                return;
+            }
+            if (window.qibbsCommunity && typeof window.qibbsCommunity.showConfirm === 'function') {
+                window.qibbsCommunity.showConfirm(options, callback);
+                return;
+            }
+            const defaults = {
+                title: '确认操作',
+                message: '确定要执行此操作吗？',
+                confirmText: '确定',
+                cancelText: '取消',
+                type: 'warning'
+            };
+            const opts = $.extend({}, defaults, options);
+            const safeTitle = $('<div>').text(opts.title).html();
+            const safeMessage = $('<div>').text(opts.message).html().replace(/\n/g, '<br>');
+            const safeConfirm = $('<div>').text(opts.confirmText).html();
+            const safeCancel = $('<div>').text(opts.cancelText).html();
+            const btnClass = opts.type === 'danger' ? 'qibbs-btn-danger' : (opts.type === 'primary' ? 'qibbs-btn-primary' : 'qibbs-btn-warning');
+
+            const modalHtml = `
+                <div class="qibbs-pay-modal-wrap qibbs-dynamic-pay-confirm" style="z-index:999999;">
+                    <div class="qibbs-pay-modal-backdrop"></div>
+                    <div class="qibbs-pay-modal-dialog" style="max-width:440px;">
+                        <div class="qibbs-pay-modal-header">
+                            <h3 class="qibbs-pay-modal-title">${safeTitle}</h3>
+                            <button type="button" class="qibbs-pay-modal-close" data-action="cancel">&times;</button>
+                        </div>
+                        <div class="qibbs-pay-modal-body" style="padding:20px;">
+                            <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">${safeMessage}</p>
+                        </div>
+                        <div style="display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid #e2e8f0;background:#f8fafc;">
+                            <button type="button" class="qibbs-btn qibbs-btn-default" data-action="cancel">${safeCancel}</button>
+                            <button type="button" class="qibbs-btn ${btnClass}" data-action="confirm">${safeConfirm}</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            const $modal = $(modalHtml).appendTo('body');
+            function close(res) {
+                $modal.remove();
+                if (typeof callback === 'function') callback(res);
+            }
+            $modal.find('[data-action="cancel"], .qibbs-pay-modal-backdrop').on('click', function() { close(false); });
+            $modal.find('[data-action="confirm"]').on('click', function() { close(true); });
         }
     };
 

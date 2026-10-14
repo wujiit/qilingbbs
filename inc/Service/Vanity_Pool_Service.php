@@ -320,13 +320,14 @@ class Qibbs_Vanity_Pool_Service {
     }
 
     /**
-     * 将靓号指派给指定用户
+     * 将靓号赠送或指派给指定用户
      *
-     * @param int $cuid    Vanity Number.
-     * @param int $user_id Target User ID.
+     * @param int  $cuid       Vanity Number.
+     * @param int  $user_id    Target User ID.
+     * @param bool $auto_equip 是否同时设为该用户当前生效佩戴的 UID（默认 false：仅赠送入背包）.
      * @return array{success:bool, message:string}
      */
-    public function assign_to_user( $cuid, $user_id ) {
+    public function assign_to_user( $cuid, $user_id, $auto_equip = false ) {
         $cuid    = absint( $cuid );
         $user_id = absint( $user_id );
 
@@ -340,17 +341,49 @@ class Qibbs_Vanity_Pool_Service {
         }
 
         global $wpdb;
-        $vanity_table  = Qibbs_Database::vanity_uids();
-        $members_table = Qibbs_Database::members();
-
-        // 1. 核心操作：直接更新会员的主体社区 UID（保底UID与佩戴UID均更新为该号）
+        $vanity_table   = Qibbs_Database::vanity_uids();
+        $members_table  = Qibbs_Database::members();
         $member_service = Qibbs_Member_Service::instance();
-        $update_res     = $member_service->update_user_cuid( $user_id, $cuid, true );
-        if ( ! $update_res['success'] ) {
-            return $update_res;
+
+        // 确保目标用户社区档案已建立
+        $member_service->get_user_cuid( $user_id );
+
+        // 检查是否有其他用户正在佩戴或占用该号码（冲突检查）
+        $conflict_user = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT user_id FROM {$members_table} WHERE (default_cuid = %d OR active_cuid = %d) AND user_id != %d LIMIT 1",
+                $cuid,
+                $cuid,
+                $user_id
+            )
+        );
+        if ( $conflict_user > 0 ) {
+            $other_user = get_userdata( $conflict_user );
+            $other_name = $other_user ? $other_user->display_name : 'ID ' . $conflict_user;
+            return array(
+                'success' => false,
+                'message' => sprintf( __( '号码 %d 已被用户 %s 占用为社区 UID，无法赠送/指派！', 'qibbs-community' ), $cuid, $other_name ),
+            );
         }
 
-        // 2. 同步登记到靓号资产表，标记归属权
+        // 检查是否有其他用户在背包中持有该有效靓号
+        $other_owner = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT owner_id FROM {$vanity_table} WHERE cuid = %d AND status = 'owned' AND owner_id != %d AND owner_id > 0 LIMIT 1",
+                $cuid,
+                $user_id
+            )
+        );
+        if ( $other_owner > 0 ) {
+            $owner_user = get_userdata( $other_owner );
+            $owner_name = $owner_user ? $owner_user->display_name : 'ID ' . $other_owner;
+            return array(
+                'success' => false,
+                'message' => sprintf( __( '号码 %d 当前属于用户 %s 的背包资产，无法重复指派！若需转移请先收回。', 'qibbs-community' ), $cuid, $owner_name ),
+            );
+        }
+
+        // 1. 同步登记到靓号资产表，标记归属权给该用户背包
         $exists_vanity = (int) $wpdb->get_var(
             $wpdb->prepare( "SELECT cuid FROM {$vanity_table} WHERE cuid = %d LIMIT 1", $cuid )
         );
@@ -362,12 +395,13 @@ class Qibbs_Vanity_Pool_Service {
                 array(
                     'owner_id'       => $user_id,
                     'status'         => 'owned',
+                    'c2c_seller_id'  => 0,
                     'obtained_at'    => $now,
-                    'transfer_count' => 1,
+                    'transfer_count' => (int) $wpdb->get_var( $wpdb->prepare( "SELECT transfer_count FROM {$vanity_table} WHERE cuid = %d", $cuid ) ) + 1,
                     'updated_at'     => $now,
                 ),
                 array( 'cuid' => $cuid ),
-                array( '%d', '%s', '%s', '%d', '%s' ),
+                array( '%d', '%s', '%d', '%s', '%d', '%s' ),
                 array( '%d' )
             );
         } else {
@@ -394,13 +428,22 @@ class Qibbs_Vanity_Pool_Service {
             );
         }
 
-        // 3. 彻底刷新用户 UID 映射与所有前端缓存
-        $member_service->invalidate_user_cache( $user_id );
-        $member_service->cache_mapping( $user_id, $cuid );
+        // 2. 根据 $auto_equip 参数决定是否佩戴
+        if ( $auto_equip ) {
+            $equip_res = $member_service->equip_cuid( $user_id, $cuid );
+            if ( ! $equip_res['success'] ) {
+                return $equip_res;
+            }
+            $msg = sprintf( __( '已成功将号码 %d 指派给用户【%s】(ID: %d)！该用户的全站当前佩戴 UID 现已生效变更为：%d。', 'qibbs-community' ), $cuid, $wp_user->display_name, $user_id, $cuid );
+        } else {
+            // 仅赠送入背包：清理用户缓存，让其背包立即可见
+            $member_service->invalidate_user_cache( $user_id );
+            $msg = sprintf( __( '已成功将号码 %d 单独赠送给用户【%s】(ID: %d)！该号码已存入该用户的号码背包，未改变其当前对外佩戴的 UID。', 'qibbs-community' ), $cuid, $wp_user->display_name, $user_id );
+        }
 
         return array(
             'success' => true,
-            'message' => sprintf( __( '已成功将号码 %d 直接指派给用户【%s】(ID: %d)！该用户的社区 UID 现已生效变更为：%d。', 'qibbs-community' ), $cuid, $wp_user->display_name, $user_id, $cuid ),
+            'message' => $msg,
         );
     }
 
@@ -483,11 +526,12 @@ class Qibbs_Vanity_Pool_Service {
     /**
      * 用户从商城购买靓号
      *
-     * @param int $user_id User ID.
-     * @param int $cuid    Vanity number.
-     * @return array{success:bool, message:string, cuid?:int}
+     * @param int  $user_id    User ID.
+     * @param int  $cuid       Vanity number.
+     * @param bool $auto_equip 是否购买后立即佩戴生效（默认 false：仅存入背包）.
+     * @return array{success:bool, message:string, cuid?:int, auto_equip?:bool}
      */
-    public function purchase_vanity_number( $user_id, $cuid ) {
+    public function purchase_vanity_number( $user_id, $cuid, $auto_equip = false ) {
         $user_id = absint( $user_id );
         $cuid    = absint( $cuid );
 
@@ -630,10 +674,21 @@ class Qibbs_Vanity_Pool_Service {
          */
         do_action( 'qibbs_uid_purchased', $user_id, $cuid, $price );
 
+        $auto_equip = (bool) $auto_equip;
+        if ( $auto_equip ) {
+            $member_service = Qibbs_Member_Service::instance();
+            $member_service->equip_cuid( $user_id, $cuid );
+            $msg = sprintf( __( '恭喜！靓号 %d 兑换成功，并已成功佩戴生效！', 'qibbs-community' ), $cuid );
+        } else {
+            Qibbs_Member_Service::instance()->invalidate_user_cache( $user_id );
+            $msg = sprintf( __( '恭喜！靓号 %d 已成功存入您的背包！可在号码背包随时一键佩戴。', 'qibbs-community' ), $cuid );
+        }
+
         return array(
-            'success' => true,
-            'message' => sprintf( __( '恭喜！靓号 %d 已成功存入您的背包', 'qibbs-community' ), $cuid ),
-            'cuid'    => $cuid,
+            'success'    => true,
+            'message'    => $msg,
+            'cuid'       => $cuid,
+            'auto_equip' => $auto_equip,
         );
     }
 

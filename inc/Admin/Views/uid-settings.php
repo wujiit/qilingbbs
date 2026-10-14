@@ -102,12 +102,14 @@ if ( isset( $_POST['qibbs_uid_add_vanity'] ) && check_admin_referer( 'qibbs_uid_
     $notice_type = $result['success'] ? 'success' : 'error';
 }
 
-// 3. 处理号码直接指派给用户
+// 3. 处理号码赠送或指派给用户
 if ( isset( $_POST['qibbs_uid_assign_user'] ) && check_admin_referer( 'qibbs_uid_assign_action', 'qibbs_uid_nonce' ) ) {
     $target_cuid = absint( $_POST['assign_cuid'] ?? 0 );
     $target_uid  = absint( $_POST['assign_user_id'] ?? 0 );
+    $assign_mode = sanitize_key( $_POST['assign_mode'] ?? 'gift' );
+    $auto_equip  = ( 'equip' === $assign_mode );
 
-    $result      = $pool_service->assign_to_user( $target_cuid, $target_uid );
+    $result      = $pool_service->assign_to_user( $target_cuid, $target_uid, $auto_equip );
     $notice      = $result['message'];
     $notice_type = $result['success'] ? 'success' : 'error';
 }
@@ -372,24 +374,43 @@ $total_fee_cash   = (float) $wpdb->get_var( "SELECT SUM(platform_fee_cash) FROM 
                     </form>
                 </div>
 
-                <!-- 直接指派号码给用户 -->
+                <!-- 赠送 / 指派号码给用户 -->
                 <div style="background: #fff; padding: 20px; border: 1px solid #ccd0d4; border-radius: 6px;">
-                    <h3 style="margin-top: 0; color: #1d2327; display: flex; align-items: center; gap: 6px;"><span class="dashicons dashicons-admin-users" style="font-size:20px;width:20px;height:20px;color:#2271b1;"></span><?php esc_html_e( '直接指派号码给用户', 'qibbs-community' ); ?></h3>
+                    <h3 style="margin-top: 0; color: #1d2327; display: flex; align-items: center; gap: 6px;"><span class="dashicons dashicons-admin-users" style="font-size:20px;width:20px;height:20px;color:#2271b1;"></span><?php esc_html_e( '赠送 / 指派号码给用户', 'qibbs-community' ); ?></h3>
                     <p class="description" style="margin-bottom: 12px;">
-                        <?php esc_html_e( '管理员拥有最高发号权：输入任意号码（包括保留段如 1、666 等）与用户 ID，立即将该用户的全站社区 UID 变更为此号码！', 'qibbs-community' ); ?>
+                        <?php esc_html_e( '管理员拥有最高发号与赠送权：可单独将号码赠送发放到用户背包（不强制佩戴），也可直接指派并生效为其对外 UID。', 'qibbs-community' ); ?>
                     </p>
                     <form method="post">
                         <?php wp_nonce_field( 'qibbs_uid_assign_action', 'qibbs_uid_nonce' ); ?>
                         <p>
                             <label><strong><?php esc_html_e( '分配号码', 'qibbs-community' ); ?></strong></label><br>
-                            <input type="number" name="assign_cuid" required class="widefat" placeholder="如 1 或 666">
+                            <input type="number" name="assign_cuid" required class="widefat" placeholder="<?php esc_attr_e( '如 1 或 666', 'qibbs-community' ); ?>">
                         </p>
                         <p>
                             <label><strong><?php esc_html_e( '目标用户 ID (WordPress ID)', 'qibbs-community' ); ?></strong></label><br>
-                            <input type="number" name="assign_user_id" required class="widefat" placeholder="如 1">
+                            <input type="number" name="assign_user_id" required class="widefat" placeholder="<?php esc_attr_e( '如 1', 'qibbs-community' ); ?>">
                         </p>
+                        <div style="margin: 14px 0; padding: 12px; background: #f6f7f7; border-radius: 6px; border: 1px solid #dcdcde;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px;">
+                                <?php esc_html_e( '发号模式：', 'qibbs-community' ); ?>
+                            </label>
+                            <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                                <input type="radio" name="assign_mode" value="gift" checked style="margin-top:-2px;">
+                                <strong><?php esc_html_e( '单独赠送（存入用户背包）', 'qibbs-community' ); ?></strong>
+                                <span style="color: #646970; font-size: 12px; display: block; padding-left: 22px; margin-top: 2px;">
+                                    <?php esc_html_e( '赋予该靓号所有权并放入背包，不强制改变用户当前佩戴的 UID 与保底号。', 'qibbs-community' ); ?>
+                                </span>
+                            </label>
+                            <label style="display: block; margin-top: 6px; cursor: pointer;">
+                                <input type="radio" name="assign_mode" value="equip" style="margin-top:-2px;">
+                                <strong><?php esc_html_e( '指派并立即佩戴', 'qibbs-community' ); ?></strong>
+                                <span style="color: #646970; font-size: 12px; display: block; padding-left: 22px; margin-top: 2px;">
+                                    <?php esc_html_e( '将该用户的全站当前生效佩戴 UID 立即变更为此号码。', 'qibbs-community' ); ?>
+                                </span>
+                            </label>
+                        </div>
                         <p>
-                            <input type="submit" name="qibbs_uid_assign_user" class="button button-primary" style="width: 100%; text-align: center;" value="<?php esc_attr_e( '立即指派并设为该用户 UID', 'qibbs-community' ); ?>" onclick="return confirm('<?php echo esc_js( __( '确定将该号码直接指定为该用户的社区 UID 吗？操作后该用户的 UID 将立即变更为此号码并在全站生效！', 'qibbs-community' ) ); ?>');">
+                            <input type="submit" name="qibbs_uid_assign_user" class="button button-primary" style="width: 100%; text-align: center;" value="<?php esc_attr_e( '确认发放号码', 'qibbs-community' ); ?>">
                         </p>
                     </form>
                 </div>
@@ -457,7 +478,7 @@ $total_fee_cash   = (float) $wpdb->get_var( "SELECT SUM(platform_fee_cash) FROM 
                                             </button>
                                             <button type="button" class="button button-small qibbs-open-assign-vanity"
                                                 data-cuid="<?php echo esc_attr( $item->cuid ); ?>">
-                                                <?php esc_html_e( '指派', 'qibbs-community' ); ?>
+                                                <?php esc_html_e( '赠送 / 指派', 'qibbs-community' ); ?>
                                             </button>
                                             <?php $del_url = wp_nonce_url( admin_url( 'admin.php?page=qibbs-uid-settings&tab=rules&delete_vanity_cuid=' . $item->cuid ), 'qibbs_delete_cuid_' . $item->cuid ); ?>
                                             <a href="<?php echo esc_url( $del_url ); ?>" class="button button-small button-link-delete" onclick="return confirm('确定从官方资产库彻底删除号码 #<?php echo esc_js( $item->cuid ); ?> 吗？');" style="color:#b32d2e;">
@@ -733,11 +754,11 @@ $total_fee_cash   = (float) $wpdb->get_var( "SELECT SUM(platform_fee_cash) FROM 
     </div>
 </div>
 
-<!-- ==================== 管理员快捷指派弹窗 ==================== -->
+<!-- ==================== 管理员快捷指派/赠送弹窗 ==================== -->
 <div id="qibbs-admin-assign-vanity-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);z-index:99999;align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:8px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,0,0,0.3);overflow:hidden;padding:0;">
+    <div style="background:#fff;border-radius:8px;width:100%;max-width:440px;box-shadow:0 10px 30px rgba(0,0,0,0.3);overflow:hidden;padding:0;">
         <div style="padding:16px 20px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center;background:#f6f7f7;">
-            <h3 style="margin:0;font-size:16px;font-weight:600;"><?php esc_html_e( '直接指派号码给用户', 'qibbs-community' ); ?></h3>
+            <h3 style="margin:0;font-size:16px;font-weight:600;"><?php esc_html_e( '赠送 / 指派号码给用户', 'qibbs-community' ); ?></h3>
             <button type="button" class="qibbs-close-admin-modal" style="background:none;border:none;font-size:20px;cursor:pointer;color:#666;">&times;</button>
         </div>
         <form method="post" action="" style="padding:20px;">
@@ -745,21 +766,38 @@ $total_fee_cash   = (float) $wpdb->get_var( "SELECT SUM(platform_fee_cash) FROM 
             <input type="hidden" name="assign_cuid" id="qibbs-assign-vanity-cuid-input" value="">
 
             <div style="text-align:center;margin-bottom:18px;background:#f0f6fc;padding:12px;border-radius:6px;">
-                <div style="font-size:12px;color:#646970;"><?php esc_html_e( '指派靓号', 'qibbs-community' ); ?></div>
+                <div style="font-size:12px;color:#646970;"><?php esc_html_e( '发放靓号', 'qibbs-community' ); ?></div>
                 <div id="qibbs-assign-vanity-cuid-display" style="font-size:26px;font-weight:700;color:#2271b1;font-family:monospace;margin-top:4px;">#00000</div>
             </div>
 
             <div style="margin-bottom:16px;">
                 <label style="display:block;font-weight:600;margin-bottom:5px;font-size:13px;"><?php esc_html_e( '目标用户 ID (User ID)', 'qibbs-community' ); ?></label>
                 <input type="number" name="assign_user_id" id="qibbs-assign-user-id-input" min="1" class="regular-text" style="width:100%;height:36px;" placeholder="<?php esc_attr_e( '输入用户 ID（如 1）', 'qibbs-community' ); ?>" required>
-                <p class="description" style="font-size:12px;color:#646970;margin-top:6px;">
-                    <?php esc_html_e( '提示：指派后系统会自动将该用户的社区保底 UID 及当前佩戴 UID 均变更为此号码，并完成资产所有权登记。', 'qibbs-community' ); ?>
-                </p>
+            </div>
+
+            <div style="margin-bottom: 16px; padding: 12px; background: #f6f7f7; border-radius: 6px; border: 1px solid #dcdcde;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px;">
+                    <?php esc_html_e( '发放模式：', 'qibbs-community' ); ?>
+                </label>
+                <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                    <input type="radio" name="assign_mode" value="gift" checked style="margin-top:-2px;">
+                    <strong><?php esc_html_e( '单独赠送（存入用户背包）', 'qibbs-community' ); ?></strong>
+                    <span style="color: #646970; font-size: 12px; display: block; padding-left: 22px; margin-top: 2px;">
+                        <?php esc_html_e( '发放至该用户背包，不改变其当前正在佩戴的对外号码。', 'qibbs-community' ); ?>
+                    </span>
+                </label>
+                <label style="display: block; margin-top: 6px; cursor: pointer;">
+                    <input type="radio" name="assign_mode" value="equip" style="margin-top:-2px;">
+                    <strong><?php esc_html_e( '指派并立即佩戴', 'qibbs-community' ); ?></strong>
+                    <span style="color: #646970; font-size: 12px; display: block; padding-left: 22px; margin-top: 2px;">
+                        <?php esc_html_e( '将该用户的全站当前生效佩戴 UID 立即变更为此号码。', 'qibbs-community' ); ?>
+                    </span>
+                </label>
             </div>
 
             <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:14px;border-top:1px solid #eee;">
                 <button type="button" class="button qibbs-close-admin-modal"><?php esc_html_e( '取消', 'qibbs-community' ); ?></button>
-                <button type="submit" name="qibbs_uid_assign_user" class="button button-primary"><?php esc_html_e( '确认指派', 'qibbs-community' ); ?></button>
+                <button type="submit" name="qibbs_uid_assign_user" class="button button-primary"><?php esc_html_e( '确认发放', 'qibbs-community' ); ?></button>
             </div>
         </form>
     </div>

@@ -240,13 +240,15 @@ class Qibbs_UID_Rest_Controller {
             return $this->error( __( '请先登录', 'qibbs-community' ), 401 );
         }
 
-        $cuid   = absint( $request->get_param( 'cuid' ) );
-        $result = Qibbs_Vanity_Pool_Service::instance()->purchase_vanity_number( $user_id, $cuid );
+        $cuid       = absint( $request->get_param( 'cuid' ) );
+        $auto_equip = ! empty( $request->get_param( 'auto_equip' ) );
+        $result     = Qibbs_Vanity_Pool_Service::instance()->purchase_vanity_number( $user_id, $cuid, $auto_equip );
 
         if ( ! empty( $result['success'] ) ) {
             return $this->success( array(
-                'message' => $result['message'],
-                'cuid'    => $cuid,
+                'message'    => $result['message'],
+                'cuid'       => $cuid,
+                'auto_equip' => ! empty( $result['auto_equip'] ),
             ) );
         }
 

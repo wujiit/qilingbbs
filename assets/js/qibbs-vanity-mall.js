@@ -7,6 +7,17 @@
 (function ($) {
     'use strict';
 
+    /**
+     * 安全 HTML 转义辅助函数，抵御 XSS 并保障各作用域无缝可用
+     *
+     * @param {string} str 待转义字符串
+     * @return {string}
+     */
+    function escapeHtml(str) {
+        if (!str) return '';
+        return $('<div>').text(str).html();
+    }
+
     var QibbsVanityMall = {
         state: {
             activeTab: 'official', // 'official' | 'c2c' | 'backpack'
@@ -58,8 +69,19 @@
                 return;
             }
 
+            // 读取服务端预渲染的真实数量，初始化内部统计状态
+            var initOfficialCount = parseInt($('#qibbs-official-tab-count').text(), 10);
+            if (!isNaN(initOfficialCount) && initOfficialCount >= 0) {
+                this.state.official.total = initOfficialCount;
+            }
+            var initC2CCount = parseInt($('#qibbs-c2c-tab-count').text(), 10);
+            if (!isNaN(initC2CCount) && initC2CCount >= 0) {
+                this.state.c2c.total = initC2CCount;
+            }
+
             this.bindEvents();
             this.handleInitialRouting();
+            this.syncTabCounts();
         },
 
         bindEvents: function () {
@@ -169,6 +191,17 @@
                 self.executeBuyMallItem();
             });
 
+            // 切换购买后是否佩戴
+            $(document).on('change', '#qibbs-buy-auto-equip-toggle', function () {
+                var isEquip = $(this).is(':checked');
+                var pointsName = qibbsData.pointsName || '灵力';
+                if (isEquip) {
+                    $('#qibbs-confirm-buy-btn .qibbs-btn-label').text(pointsName + '兑换并立即佩戴');
+                } else {
+                    $('#qibbs-confirm-buy-btn .qibbs-btn-label').text(pointsName + '兑换（存入背包）');
+                }
+            });
+
             // 现金直接购买
             $(document).on('click', '#qibbs-cash-buy-direct-btn', function (e) {
                 e.preventDefault();
@@ -226,11 +259,24 @@
                 }
             });
 
-            // 购买 C2C 寄售号码
+            // 购买 C2C 寄售号码（唤起专属 C2C 购买确认弹窗）
             $(document).on('click', '.qibbs-buy-c2c-btn', function (e) {
                 e.preventDefault();
                 var item = $(this).data('item');
-                self.executeBuyC2CItem(item);
+                self.openC2CBuyModal(item);
+            });
+
+            // 确认 C2C 积分购买
+            $(document).on('click', '#qibbs-c2c-confirm-buy-btn', function () {
+                self.executeBuyC2CItemWithPoints();
+            });
+
+            // C2C 现金支付跳转收银台
+            $(document).on('click', '#qibbs-c2c-cash-buy-direct-btn', function () {
+                if (self.state.activeC2CBuyItem) {
+                    $('#qibbs-c2c-buy-modal').fadeOut(150);
+                    self.openCashCheckout(self.state.activeC2CBuyItem);
+                }
             });
 
             // 下架 C2C 寄售号码
@@ -344,6 +390,7 @@
                     var cuid = urlParams.get('cuid');
                     this.showToast('订单支付成功！' + (cuid ? '靓号 ' + cuid + ' 已发放到您的号码背包！' : ''), 'success');
                     this.switchTab('backpack', true);
+                    this.syncTabCounts();
 
                     // 清除 pay_success 和 cuid 避免刷新反复提示
                     urlParams.delete('pay_success');
@@ -354,6 +401,85 @@
                         window.history.replaceState({ view: 'vanity-mall' }, '', newUrl);
                     }
                 }
+            }
+        },
+
+        syncTabCounts: function () {
+            var self = this;
+            if (this._syncingCounts) {
+                return;
+            }
+            this._syncingCounts = true;
+            setTimeout(function () {
+                self._syncingCounts = false;
+            }, 1500);
+
+            // 1. 同步 C2C 寄售大厅数量（若当前处于其他 Tab 且 C2C 尚未全量加载）
+            if ($('#qibbs-c2c-tab-count').length > 0 && (!this.state.c2c.loaded || this.state.activeTab !== 'c2c')) {
+                $.ajax({
+                    url: qibbsData.restUrl + 'c2c/market',
+                    type: 'GET',
+                    data: {
+                        page: 1,
+                        per_page: 1
+                    },
+                    beforeSend: function (xhr) {
+                        if (qibbsData.restNonce) {
+                            xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
+                        }
+                    },
+                    success: function (res) {
+                        if (res && res.success && res.data && typeof res.data.total !== 'undefined') {
+                            var total = parseInt(res.data.total, 10) || 0;
+                            self.state.c2c.total = total;
+                            $('#qibbs-c2c-tab-count').text(total);
+                        }
+                    }
+                });
+            }
+
+            // 2. 同步号码背包数量（若用户已登录且背包尚未全量加载）
+            if (qibbsData.isLoggedIn && (!this.state.backpack.loaded || this.state.activeTab !== 'backpack')) {
+                $.ajax({
+                    url: qibbsData.restUrl + 'uid/backpack',
+                    type: 'GET',
+                    beforeSend: function (xhr) {
+                        if (qibbsData.restNonce) {
+                            xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
+                        }
+                    },
+                    success: function (res) {
+                        if (res && res.success && res.data && Array.isArray(res.data.items)) {
+                            var bpCount = res.data.items.length;
+                            $('#qibbs-backpack-tab-count').text(bpCount);
+                            $('#qibbs-bp-total-count').text(bpCount);
+                        }
+                    }
+                });
+            }
+
+            // 3. 同步官方自营商城数量（若当前处于其他 Tab 且官方商城尚未全量加载）
+            if ($('#qibbs-official-tab-count').length > 0 && (!this.state.official.loaded || this.state.activeTab !== 'official')) {
+                $.ajax({
+                    url: qibbsData.restUrl + 'uid/mall',
+                    type: 'GET',
+                    data: {
+                        page: 1,
+                        per_page: 1
+                    },
+                    beforeSend: function (xhr) {
+                        if (qibbsData.restNonce) {
+                            xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
+                        }
+                    },
+                    success: function (res) {
+                        if (res && res.success && res.data && typeof res.data.total !== 'undefined') {
+                            var total = parseInt(res.data.total, 10) || 0;
+                            self.state.official.total = total;
+                            $('#qibbs-official-tab-count').text(total);
+                        }
+                    }
+                });
             }
         },
 
@@ -377,6 +503,7 @@
 
             // 自动加载首屏数据
             this.switchTab(this.state.activeTab, false);
+            this.syncTabCounts();
         },
 
         hideVanityMall: function (pushHistory) {
@@ -752,7 +879,7 @@
                 var actionsHtml = '<div class="qibbs-bp-actions">';
                 if (isDefault) {
                     if (!isEquipped) {
-                        actionsHtml += '<button type="button" class="qibbs-btn qibbs-btn-primary qibbs-btn-sm qibbs-equip-btn" data-cuid="' + it.cuid + '">一键恢复佩戴</button>';
+                        actionsHtml += '<button type="button" class="qibbs-btn qibbs-btn-primary qibbs-btn-sm qibbs-equip-btn" data-cuid="' + it.cuid + '">恢复佩戴</button>';
                     } else {
                         actionsHtml += '<span class="qibbs-bp-hint-text">永久保底号 · 佩戴中</span>';
                     }
@@ -763,7 +890,7 @@
                         if (!isEquipped) {
                             actionsHtml += '<button type="button" class="qibbs-btn qibbs-btn-primary qibbs-btn-sm qibbs-equip-btn" data-cuid="' + it.cuid + '">佩戴生效</button>';
                         } else {
-                            actionsHtml += '<button type="button" class="qibbs-btn qibbs-btn-default qibbs-btn-sm qibbs-equip-btn" data-cuid="' + (self.getDefaultCuid(items)) + '">卸下换回保底号</button>';
+                            actionsHtml += '<button type="button" class="qibbs-btn qibbs-btn-default qibbs-btn-sm qibbs-equip-btn" data-cuid="' + (self.getDefaultCuid(items)) + '">卸下佩戴</button>';
                         }
                         actionsHtml += '<button type="button" class="qibbs-btn qibbs-btn-success qibbs-btn-sm qibbs-list-modal-btn" data-cuid="' + it.cuid + '" data-grade-label="' + self.escapeHtml(gradeLabel) + '" data-grade-level="' + it.grade + '">挂牌寄售</button>';
                         actionsHtml += '<button type="button" class="qibbs-btn qibbs-btn-danger qibbs-btn-sm qibbs-recycle-modal-btn" data-cuid="' + it.cuid + '" data-grade-label="' + self.escapeHtml(gradeLabel) + '" data-grade-level="' + it.grade + '">官方回售</button>';
@@ -800,12 +927,13 @@
 
         /* ==================== 4. 购买、佩戴与交易执行逻辑 ==================== */
         openBuyModal: function (item) {
+            var self = this;
             if (!qibbsData.isLoggedIn) {
-                this.showToast('请先登录后再进行购买', 'warning');
+                self.showToast('请先登录后再进行购买', 'warning');
                 return;
             }
 
-            this.state.activeBuyItem = item;
+            self.state.activeBuyItem = item;
             var hasShopPoints = !!(qibbsData.hasShopPoints || (qibbsData.vanityMall && qibbsData.vanityMall.hasShopPoints));
             var cashPrice = parseFloat(item.price_cash) || 0;
             var pointsPrice = parseInt(item.price_points || item.price, 10) || 0;
@@ -814,7 +942,7 @@
 
             // 1. 无启灵商城积分系统模式 -> 纯现金直购，直接拉起现金收银台！
             if (!hasShopPoints) {
-                this.openCashCheckout(item);
+                self.openCashCheckout(item);
                 return;
             }
 
@@ -829,14 +957,15 @@
             $('#qibbs-buy-balance-display').text(userPoints.toLocaleString() + ' ' + pointsName);
             $('#qibbs-buy-points-price-row span:first').text(pointsName + '价格');
             $('#qibbs-buy-user-balance-row span:first').text('您的当前' + pointsName);
-            $('#qibbs-buy-remain-row span:first').text(pointsName + '支付后剩余');
-            $('#qibbs-confirm-buy-btn .qibbs-btn-label').text(pointsName + '兑换并佩戴');
+            // 默认不勾选立即佩戴，按钮显示“兑换（存入背包）”
+            $('#qibbs-buy-auto-equip-toggle').prop('checked', false);
+            $('#qibbs-confirm-buy-btn .qibbs-btn-label').text(pointsName + '兑换（存入背包）');
 
             // 现金直购快捷按钮与价格展示
             if (cashPrice > 0 && qibbsData.paymentEnabled) {
                 $('#qibbs-buy-cash-price-row').show();
                 $('#qibbs-buy-cash-price-display').text(symbol + cashPrice.toFixed(2));
-                $('#qibbs-cash-buy-direct-btn').show().find('.qibbs-btn-label').text('现金直接支付 ' + symbol + cashPrice.toFixed(2));
+                $('#qibbs-cash-buy-direct-btn').show().find('.qibbs-btn-label').text('现金支付 ' + symbol + cashPrice.toFixed(2));
             } else {
                 $('#qibbs-buy-cash-price-row').hide();
                 $('#qibbs-cash-buy-direct-btn').hide();
@@ -866,8 +995,9 @@
         },
 
         openCashCheckout: function (item) {
+            var self = this;
             if (!qibbsData.isLoggedIn) {
-                this.showToast('请先登录后再进行购买', 'warning');
+                self.showToast('请先登录后再进行购买', 'warning');
                 return;
             }
 
@@ -897,6 +1027,8 @@
             }
 
             var cuid = this.state.activeBuyItem.cuid;
+            var autoEquip = $('#qibbs-buy-auto-equip-toggle').is(':checked') ? 1 : 0;
+            var pointsName = qibbsData.pointsName || '灵力';
             var $btn = $('#qibbs-confirm-buy-btn');
 
             $btn.prop('disabled', true).find('.qibbs-btn-loading-spinner').show();
@@ -905,7 +1037,7 @@
             $.ajax({
                 url: qibbsData.restUrl + 'uid/mall/buy',
                 type: 'POST',
-                data: { cuid: cuid },
+                data: { cuid: cuid, auto_equip: autoEquip },
                 beforeSend: function (xhr) {
                     if (qibbsData.restNonce) {
                         xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
@@ -913,14 +1045,17 @@
                 },
                 success: function (res) {
                     $btn.prop('disabled', false).find('.qibbs-btn-loading-spinner').hide();
-                    $btn.find('.qibbs-btn-label, .qibbs-btn-text').text('确认兑换并佩戴');
+                    var defaultBtnText = autoEquip ? (pointsName + '兑换并立即佩戴') : (pointsName + '兑换（存入背包）');
+                    $btn.find('.qibbs-btn-label, .qibbs-btn-text').text(defaultBtnText);
                     $('#qibbs-buy-modal').fadeOut(150);
 
                     if (res && res.success) {
-                        self.showToast('靓号 ' + cuid + ' 兑换成功，已成功佩戴！', 'success');
-                        // 自动佩戴并更新界面状态
-                        self.state.backpack.activeCuid = cuid;
-                        $('#qibbs-hero-active-cuid span').text(cuid);
+                        var msg = (res.data && res.data.message) ? res.data.message : (autoEquip ? ('靓号 ' + cuid + ' 兑换成功，并已成功佩戴！') : ('靓号 ' + cuid + ' 兑换成功，已存入您的背包！可在号码背包随时一键佩戴。'));
+                        self.showToast(msg, 'success');
+                        if (autoEquip) {
+                            self.state.backpack.activeCuid = cuid;
+                            $('#qibbs-hero-active-cuid span').text(cuid);
+                        }
                         self.loadOfficialMall();
                         self.loadBackpack();
                     } else {
@@ -929,7 +1064,8 @@
                 },
                 error: function (xhr) {
                     $btn.prop('disabled', false).find('.qibbs-btn-loading-spinner').hide();
-                    $btn.find('.qibbs-btn-label, .qibbs-btn-text').text('确认兑换并佩戴');
+                    var defaultBtnText = autoEquip ? (pointsName + '兑换并立即佩戴') : (pointsName + '兑换（存入背包）');
+                    $btn.find('.qibbs-btn-label, .qibbs-btn-text').text(defaultBtnText);
                     var msg = '兑换失败，请稍后重试';
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         msg = xhr.responseJSON.message;
@@ -976,6 +1112,7 @@
         },
 
         openListModal: function (cuid, gradeLabel, gradeLevel) {
+            var self = this;
             var hasShopPoints = !!(qibbsData.hasShopPoints || (qibbsData.vanityMall && qibbsData.vanityMall.hasShopPoints));
             var pointsName = (qibbsData.vanityMall && qibbsData.vanityMall.pointsName) ? qibbsData.vanityMall.pointsName : '积分';
             $('#qibbs-list-target-cuid').val(cuid);
@@ -1059,74 +1196,142 @@
 
         executeDelistNumber: function (cuid) {
             var self = this;
-            if (!confirm('确定要撤回下架该号码吗？下架后号码将恢复至您的背包中。')) {
-                return;
-            }
-
-            $.ajax({
-                url: qibbsData.restUrl + 'c2c/delist',
-                type: 'POST',
-                data: { cuid: cuid },
-                beforeSend: function (xhr) {
-                    if (qibbsData.restNonce) {
-                        xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
-                    }
-                },
-                success: function (res) {
-                    if (res && res.success) {
-                        self.showToast('已成功撤销寄售，号码已恢复至背包', 'success');
-                        self.loadBackpack();
-                        self.loadC2CMarket();
-                    } else {
-                        self.showToast(res && res.message ? res.message : '下架失败', 'error');
-                    }
-                },
-                error: function (xhr) {
-                    var msg = '下架操作失败';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        msg = xhr.responseJSON.message;
-                    }
-                    self.showToast(msg, 'error');
+            self.showConfirm({
+                title: '撤回下架',
+                message: '确定要撤回下架靓号 ' + cuid + ' 吗？下架后号码将退回您的背包并可立即佩戴。',
+                confirmText: '确认撤回',
+                cancelText: '取消',
+                type: 'warning'
+            }, function (confirmed) {
+                if (!confirmed) {
+                    return;
                 }
+
+                $.ajax({
+                    url: qibbsData.restUrl + 'c2c/delist',
+                    type: 'POST',
+                    data: { cuid: cuid },
+                    beforeSend: function (xhr) {
+                        if (qibbsData.restNonce) {
+                            xhr.setRequestHeader('X-WP-Nonce', qibbsData.restNonce);
+                        }
+                    },
+                    success: function (res) {
+                        if (res && res.success) {
+                            self.showToast('已成功撤销寄售，号码已恢复至背包', 'success');
+                            self.loadBackpack();
+                            self.loadC2CMarket();
+                        } else {
+                            self.showToast(res && res.message ? res.message : '下架失败', 'error');
+                        }
+                    },
+                    error: function (xhr) {
+                        var msg = '下架操作失败';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        self.showToast(msg, 'error');
+                    }
+                });
             });
         },
 
-        executeBuyC2CItem: function (item) {
+        openC2CBuyModal: function (item) {
             var self = this;
             if (!qibbsData.isLoggedIn) {
-                this.showToast('请先登录后再购买', 'warning');
+                this.showToast('请先登录后再进行购买', 'warning');
                 return;
             }
 
+            this.state.activeC2CBuyItem = item;
             var hasShopPoints = !!(qibbsData.hasShopPoints || (qibbsData.vanityMall && qibbsData.vanityMall.hasShopPoints));
             var pointsPrice = parseInt(item.c2c_price_points || item.price_points, 10) || 0;
             var cashPrice = parseFloat(item.c2c_price_cash || item.price_cash) || 0;
             var symbol = qibbsData.currencySymbol || '¥';
             var pointsName = (qibbsData.vanityMall && qibbsData.vanityMall.pointsName) ? qibbsData.vanityMall.pointsName : '积分';
+            var gradeLabel = item.grade_label || '靓号';
 
-            // 1. 无启灵商城积分，或该号码仅标现金价 -> 调起现金收银台
+            // 1. 无启灵商城积分且未标积分价，仅标现金价时直接引导唤起原生收银台
             if (!hasShopPoints || (pointsPrice <= 0 && cashPrice > 0)) {
                 self.openCashCheckout(item);
                 return;
             }
 
-            // 2. 检查当前买家余额
+            // 填充卖家信息
+            $('#qibbs-c2c-buy-seller-avatar').attr('src', item.seller_avatar || '');
+            $('#qibbs-c2c-buy-seller-name').text(item.seller_name || '玩家');
+            $('#qibbs-c2c-buy-seller-time').text(item.listed_time_ago ? ('挂牌于 ' + item.listed_time_ago) : '寄售在售');
+
+            // 填充卡片信息
+            $('#qibbs-c2c-buy-grade-tag').text(gradeLabel);
+            $('#qibbs-c2c-buy-cuid-num').text(item.cuid);
+
             var userPoints = parseInt($('#qibbs-hero-user-points span').text().replace(/,/g, ''), 10) || 0;
-            if (userPoints < pointsPrice) {
-                // 余额不足：如果有现金价且支持现金支付，引导现金支付
-                if (cashPrice > 0 && qibbsData.paymentEnabled) {
-                    if (confirm('您的' + pointsName + '余额不足（所需 ' + pointsPrice.toLocaleString() + ' ' + pointsName + '，当前 ' + userPoints.toLocaleString() + ' ' + pointsName + '）。\n\n是否改用现金直接支付 ' + symbol + cashPrice.toFixed(2) + ' 购买？')) {
-                        self.openCashCheckout(item);
+            var diff = userPoints - pointsPrice;
+
+            // 现金直购快捷按钮与价格行
+            if (cashPrice > 0 && qibbsData.paymentEnabled) {
+                $('#qibbs-c2c-buy-cash-price-row').show();
+                $('#qibbs-c2c-buy-cash-price-display').text(symbol + cashPrice.toFixed(2));
+                $('#qibbs-c2c-cash-buy-direct-btn').show().find('.qibbs-btn-label').text('现金支付 ' + symbol + cashPrice.toFixed(2));
+            } else {
+                $('#qibbs-c2c-buy-cash-price-row').hide();
+                $('#qibbs-c2c-cash-buy-direct-btn').hide();
+            }
+
+            // 积分购买行与余额核算
+            if (hasShopPoints && pointsPrice > 0) {
+                $('#qibbs-c2c-buy-points-price-row').show();
+                $('#qibbs-c2c-buy-price-display').text(pointsPrice.toLocaleString() + ' ' + pointsName);
+                $('#qibbs-c2c-buy-user-balance-row').show().find('span:first').text('您的当前' + pointsName);
+                $('#qibbs-c2c-buy-balance-display').text(userPoints.toLocaleString() + ' ' + pointsName);
+                $('#qibbs-c2c-buy-remain-row').show().find('span:first').text(pointsName + '支付后剩余');
+
+                if (diff < 0) {
+                    // 积分不足：友好的系统 UI 警示框引导现金支付或充值
+                    $('#qibbs-c2c-buy-remain-display').text(pointsName + '不足 (差 ' + Math.abs(diff).toLocaleString() + ')').css('color', '#ef4444');
+                    $('#qibbs-c2c-buy-insufficient-alert').show();
+                    $('#qibbs-c2c-confirm-buy-btn').hide();
+
+                    if (cashPrice > 0 && qibbsData.paymentEnabled) {
+                        $('#qibbs-c2c-buy-insufficient-alert').html('您的' + self.escapeHtml(pointsName) + '不足。您可直接使用现金支付 <strong>' + symbol + cashPrice.toFixed(2) + '</strong> 购买此号码！');
+                        $('#qibbs-c2c-cash-buy-direct-btn').addClass('qibbs-btn-primary').removeClass('qibbs-btn-success');
+                    } else {
+                        $('#qibbs-c2c-buy-insufficient-alert').text('您的' + pointsName + '不足，请充值后重试。');
                     }
                 } else {
-                    self.showToast('您的' + pointsName + '余额不足，请充值后重试', 'warning');
+                    // 积分充足
+                    $('#qibbs-c2c-buy-remain-display').text(diff.toLocaleString() + ' ' + pointsName).css('color', '#10b981');
+                    $('#qibbs-c2c-buy-insufficient-alert').hide();
+                    $('#qibbs-c2c-confirm-buy-btn').show().prop('disabled', false).find('.qibbs-btn-label').text(pointsName + '购买（存入背包）');
+                    $('#qibbs-c2c-cash-buy-direct-btn').removeClass('qibbs-btn-primary').addClass('qibbs-btn-success');
                 }
+            } else {
+                $('#qibbs-c2c-buy-points-price-row').hide();
+                $('#qibbs-c2c-buy-user-balance-row').hide();
+                $('#qibbs-c2c-buy-remain-row').hide();
+                $('#qibbs-c2c-buy-insufficient-alert').hide();
+                $('#qibbs-c2c-confirm-buy-btn').hide();
+                if (cashPrice > 0 && qibbsData.paymentEnabled) {
+                    $('#qibbs-c2c-cash-buy-direct-btn').addClass('qibbs-btn-primary').removeClass('qibbs-btn-success');
+                }
+            }
+
+            $('#qibbs-c2c-buy-modal').fadeIn(150);
+        },
+
+        executeBuyC2CItemWithPoints: function () {
+            var self = this;
+            if (!this.state.activeC2CBuyItem) {
                 return;
             }
 
-            if (!confirm('确认花费 ' + pointsPrice.toLocaleString() + ' ' + pointsName + ' 购买玩家 ' + item.seller_name + ' 寄售的靓号 ' + item.cuid + ' 吗？')) {
-                return;
-            }
+            var item = this.state.activeC2CBuyItem;
+            var $btn = $('#qibbs-c2c-confirm-buy-btn');
+            var pointsName = (qibbsData.vanityMall && qibbsData.vanityMall.pointsName) ? qibbsData.vanityMall.pointsName : '积分';
+
+            $btn.prop('disabled', true).find('.qibbs-btn-loading-spinner').show();
+            $btn.find('.qibbs-btn-label').text('正在购买中...');
 
             $.ajax({
                 url: qibbsData.restUrl + 'c2c/buy-points',
@@ -1138,8 +1343,12 @@
                     }
                 },
                 success: function (res) {
+                    $btn.prop('disabled', false).find('.qibbs-btn-loading-spinner').hide();
+                    $btn.find('.qibbs-btn-label').text(pointsName + '购买（存入背包）');
+                    $('#qibbs-c2c-buy-modal').fadeOut(150);
+
                     if (res && res.success) {
-                        self.showToast('交易成功！靓号 ' + item.cuid + ' 已过户至您的背包！', 'success');
+                        self.showToast('交易成功！靓号 ' + item.cuid + ' 已过户至您的背包！可在号码背包随时一键佩戴。', 'success');
                         self.loadC2CMarket();
                         self.loadBackpack();
                     } else {
@@ -1147,6 +1356,8 @@
                     }
                 },
                 error: function (xhr) {
+                    $btn.prop('disabled', false).find('.qibbs-btn-loading-spinner').hide();
+                    $btn.find('.qibbs-btn-label').text(pointsName + '购买（存入背包）');
                     var msg = '购买失败，请检查' + pointsName + '余额';
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         msg = xhr.responseJSON.message;
@@ -1154,6 +1365,10 @@
                     self.showToast(msg, 'error');
                 }
             });
+        },
+
+        executeBuyC2CItem: function (item) {
+            this.openC2CBuyModal(item);
         },
 
         openRecycleModal: function (cuid, gradeLabel, gradeLevel) {
@@ -1424,6 +1639,66 @@
             this.toastTimer = setTimeout(function () {
                 $toast.fadeOut(300);
             }, 3200);
+        },
+
+        showConfirm: function (options, callback) {
+            var defaults = {
+                title: '确认操作',
+                message: '确定要执行此操作吗？',
+                confirmText: '确定',
+                cancelText: '取消',
+                type: 'warning'
+            };
+            var opts = $.extend({}, defaults, options);
+            var safeTitle = this.escapeHtml(opts.title);
+            var safeMessage = this.escapeHtml(opts.message);
+            var safeConfirmText = this.escapeHtml(opts.confirmText);
+            var safeCancelText = this.escapeHtml(opts.cancelText);
+            var confirmBtnClass = opts.type === 'danger' ? 'qibbs-btn-danger' : (opts.type === 'primary' ? 'qibbs-btn-primary' : (opts.type === 'success' ? 'qibbs-btn-success' : 'qibbs-btn-warning'));
+
+            var iconSvg = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+
+            var modalId = 'qibbs-confirm-modal-' + Math.floor(Math.random() * 100000);
+            var html = [
+                '<div class="qibbs-vanity-modal-backdrop qibbs-dynamic-confirm-modal" id="' + modalId + '">',
+                    '<div class="qibbs-vanity-modal qibbs-confirm-dialog-box">',
+                        '<div class="qibbs-vanity-modal-header">',
+                            '<div style="display:flex;align-items:center;gap:8px;">',
+                                '<span class="qibbs-confirm-icon qibbs-confirm-' + opts.type + '">' + iconSvg + '</span>',
+                                '<h3 style="margin:0;font-size:16px;">' + safeTitle + '</h3>',
+                            '</div>',
+                            '<button type="button" class="qibbs-modal-close" data-action="cancel">&times;</button>',
+                        '</div>',
+                        '<div class="qibbs-vanity-modal-body" style="padding:20px 24px;">',
+                            '<p style="margin:0;font-size:14px;line-height:1.6;color:var(--qibbs-text,#334155);">' + safeMessage.replace(/\n/g, '<br>') + '</p>',
+                        '</div>',
+                        '<div class="qibbs-vanity-modal-footer">',
+                            '<button type="button" class="qibbs-btn qibbs-btn-default" data-action="cancel">' + safeCancelText + '</button>',
+                            '<button type="button" class="qibbs-btn ' + confirmBtnClass + '" data-action="confirm">' + safeConfirmText + '</button>',
+                        '</div>',
+                    '</div>',
+                '</div>'
+            ].join('');
+
+            var $modal = $(html).appendTo('body');
+            $modal.fadeIn(150);
+
+            function close(confirmed) {
+                $modal.fadeOut(150, function () {
+                    $modal.remove();
+                });
+                if (typeof callback === 'function') {
+                    callback(confirmed);
+                }
+            }
+
+            $modal.find('[data-action="cancel"]').on('click', function () { close(false); });
+            $modal.find('[data-action="confirm"]').on('click', function () { close(true); });
+            $modal.on('click', function (e) {
+                if ($(e.target).hasClass('qibbs-vanity-modal-backdrop')) {
+                    close(false);
+                }
+            });
         }
     };
 

@@ -3749,35 +3749,41 @@
 
             if (!postId) return;
 
-            if (!window.confirm('确定现在为该抽奖红包开奖吗？系统将从当前回帖者中随机抽取幸运中奖用户并立即发放积分。')) {
-                return;
-            }
+            self.showConfirm({
+                title: '抽奖红包开奖',
+                message: '确定现在为该抽奖红包开奖吗？系统将从当前回帖者中随机抽取幸运中奖用户并立即发放积分。',
+                confirmText: '确认开奖',
+                cancelText: '取消',
+                type: 'warning'
+            }, function (confirmed) {
+                if (!confirmed) return;
 
-            $btn.prop('disabled', true).text('开奖中...');
+                $btn.prop('disabled', true).text('开奖中...');
 
-            $.ajax({
-                url: qibbsData.ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'qibbs_draw_redpacket',
-                    nonce: qibbsData.nonce,
-                    post_id: postId
-                },
-                success: function (res) {
-                    if (res.success) {
-                        self.showToast(res.data.message || '开奖成功！');
-                        setTimeout(function () {
-                            location.reload();
-                        }, 1200);
-                    } else {
-                        self.showToast(res.data ? res.data.message : '开奖失败', 'error');
+                $.ajax({
+                    url: qibbsData.ajaxUrl,
+                    type: 'POST',
+                    data: {
+                        action: 'qibbs_draw_redpacket',
+                        nonce: qibbsData.nonce,
+                        post_id: postId
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            self.showToast(res.data.message || '开奖成功！');
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1200);
+                        } else {
+                            self.showToast(res.data ? res.data.message : '开奖失败', 'error');
+                            $btn.prop('disabled', false).text('立即开奖');
+                        }
+                    },
+                    error: function () {
+                        self.showToast('请求失败，请稍后重试', 'error');
                         $btn.prop('disabled', false).text('立即开奖');
                     }
-                },
-                error: function () {
-                    self.showToast('请求失败，请稍后重试', 'error');
-                    $btn.prop('disabled', false).text('立即开奖');
-                }
+                });
             });
         },
 
@@ -3864,39 +3870,45 @@
                 return;
             }
 
-            if (!window.confirm('确认执行此仲裁裁决吗？此操作将立即结算积分并无法撤销。')) {
-                return;
-            }
+            self.showConfirm({
+                title: '执行仲裁',
+                message: '确认执行此仲裁裁决吗？此操作将立即结算积分并无法撤销。',
+                confirmText: '确认执行',
+                cancelText: '取消',
+                type: 'danger'
+            }, function (confirmed) {
+                if (!confirmed) return;
 
-            $btn.prop('disabled', true).text('正在执行仲裁...');
+                $btn.prop('disabled', true).text('正在执行仲裁...');
 
-            $.ajax({
-                url: qibbsData.ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'qibbs_arbitrate_bounty',
-                    nonce: qibbsData.nonce,
-                    post_id: postId,
-                    arbitration_action: action,
-                    winner_comment_id: winnerCommentId,
-                    reason: reason
-                },
-                success: function (res) {
-                    if (res.success) {
-                        self.showToast(res.data.message || '仲裁执行成功！');
-                        $('#qibbs-arbitration-modal').fadeOut(150);
-                        setTimeout(function () {
-                            location.reload();
-                        }, 1200);
-                    } else {
-                        self.showToast(res.data ? res.data.message : '仲裁失败', 'error');
+                $.ajax({
+                    url: qibbsData.ajaxUrl,
+                    type: 'POST',
+                    data: {
+                        action: 'qibbs_arbitrate_bounty',
+                        nonce: qibbsData.nonce,
+                        post_id: postId,
+                        arbitration_action: action,
+                        winner_comment_id: winnerCommentId,
+                        reason: reason
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            self.showToast(res.data.message || '仲裁执行成功！');
+                            $('#qibbs-arbitration-modal').fadeOut(150);
+                            setTimeout(function () {
+                                location.reload();
+                            }, 1200);
+                        } else {
+                            self.showToast(res.data ? res.data.message : '仲裁失败', 'error');
+                            $btn.prop('disabled', false).text('确认仲裁并执行');
+                        }
+                    },
+                    error: function () {
+                        self.showToast('网络请求失败', 'error');
                         $btn.prop('disabled', false).text('确认仲裁并执行');
                     }
-                },
-                error: function () {
-                    self.showToast('网络请求失败', 'error');
-                    $btn.prop('disabled', false).text('确认仲裁并执行');
-                }
+                });
             });
         },
 

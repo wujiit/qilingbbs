@@ -82,6 +82,13 @@ class Qibbs_QilingShop_Points_Integration {
             'community_vanity_draw'          => __( '社区抽取靓号', 'qibbs-community' ),
             'community_vanity_draw_rollback' => __( '社区靓号抽奖回滚', 'qibbs-community' ),
             'community_vanity_recycle'       => __( '社区靓号系统回收', 'qibbs-community' ),
+            // 社区靓号核心业务变动映射
+            'c2c_buy_vanity_uid'             => __( '交易行购买靓号', 'qibbs-community' ),
+            'c2c_sale_vanity_uid'            => __( '交易行售出靓号', 'qibbs-community' ),
+            'buy_vanity_uid'                 => __( '官方商城兑换靓号', 'qibbs-community' ),
+            'recycle_vanity_uid'             => __( '官方回收靓号变现', 'qibbs-community' ),
+            'buy_vanity_rollback'            => __( '购买靓号退款', 'qibbs-community' ),
+            'c2c_buy_rollback'               => __( '交易行购买退款', 'qibbs-community' ),
             'community_level_upgrade_reward' => __( '社区等级升级奖励', 'qibbs-community' ),
             'qibbs_post_publish'             => __( '社区发帖奖励', 'qibbs-community' ),
             'qibbs_comment_approved'         => __( '社区评论奖励', 'qibbs-community' ),

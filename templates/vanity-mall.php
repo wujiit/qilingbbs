@@ -22,6 +22,17 @@ $c2c_fee_rate = (float) qibbs_get_option( 'c2c_fee_rate', 5.0 );
 $payment_enabled = class_exists( 'Qibbs_Payment_Manager' ) && Qibbs_Payment_Manager::instance()->is_enabled();
 $user_points_balance = ( $current_user_id && $has_shop_points && function_exists( 'qibbs_get_user_points_balance' ) ) ? qibbs_get_user_points_balance( $current_user_id ) : null;
 
+// 计算各大厅与背包实时资产统计数量，确保首屏渲染零延迟展示真实角标
+global $wpdb;
+$vanity_table         = class_exists( 'Qibbs_Database' ) ? Qibbs_Database::vanity_uids() : $wpdb->prefix . 'qibbs_vanity_uids';
+$official_total_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$vanity_table} WHERE status = 'in_pool'" );
+$c2c_total_count      = $c2c_enabled ? (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$vanity_table} WHERE status = 'c2c_listed'" ) : 0;
+$backpack_total_count = 0;
+if ( $current_user_id > 0 && function_exists( 'qibbs_get_user_backpack' ) ) {
+    $backpack_items       = qibbs_get_user_backpack( $current_user_id );
+    $backpack_total_count = is_array( $backpack_items ) ? count( $backpack_items ) : 0;
+}
+
 if ( ! isset( $is_vanity_view ) ) {
     $current_view   = isset( $_GET['view'] ) ? sanitize_key( $_GET['view'] ) : '';
     $is_vanity_view = ( 'vanity-mall' === $current_view && qibbs_is_module_enabled( 'vanity_mall' ) );
@@ -114,7 +125,7 @@ if ( ! isset( $is_vanity_view ) ) {
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
                 <span><?php esc_html_e( '官方自营商城', 'qibbs-community' ); ?></span>
-                <span class="qibbs-tab-badge" id="qibbs-official-tab-count">0</span>
+                <span class="qibbs-tab-badge" id="qibbs-official-tab-count"><?php echo esc_html( $official_total_count ); ?></span>
             </button>
             <?php if ( $c2c_enabled ) : ?>
                 <button type="button" class="qibbs-vanity-tab" data-vanity-tab="c2c" role="tab" aria-selected="false">
@@ -122,7 +133,7 @@ if ( ! isset( $is_vanity_view ) ) {
                         <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>
                     </svg>
                     <span><?php esc_html_e( 'C2C 寄售大厅', 'qibbs-community' ); ?></span>
-                    <span class="qibbs-tab-badge" id="qibbs-c2c-tab-count">0</span>
+                    <span class="qibbs-tab-badge" id="qibbs-c2c-tab-count"><?php echo esc_html( $c2c_total_count ); ?></span>
                 </button>
             <?php endif; ?>
             <button type="button" class="qibbs-vanity-tab" data-vanity-tab="backpack" role="tab" aria-selected="false">
@@ -130,7 +141,7 @@ if ( ! isset( $is_vanity_view ) ) {
                     <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
                 </svg>
                 <span><?php esc_html_e( '我的号码背包', 'qibbs-community' ); ?></span>
-                <span class="qibbs-tab-badge" id="qibbs-backpack-tab-count">0</span>
+                <span class="qibbs-tab-badge" id="qibbs-backpack-tab-count"><?php echo esc_html( $backpack_total_count ); ?></span>
             </button>
             <button type="button" class="qibbs-vanity-tab" data-vanity-tab="records" role="tab" aria-selected="false">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -329,7 +340,7 @@ if ( ! isset( $is_vanity_view ) ) {
                 </div>
                 <div class="qibbs-backpack-header-stats">
                     <span class="qibbs-bp-stat-pill">
-                        <strong id="qibbs-bp-total-count">0</strong> <?php esc_html_e( '个已持有号码', 'qibbs-community' ); ?>
+                        <strong id="qibbs-bp-total-count"><?php echo esc_html( $backpack_total_count ); ?></strong> <?php esc_html_e( '个已持有号码', 'qibbs-community' ); ?>
                     </span>
                     <button type="button" class="qibbs-btn qibbs-btn-sm qibbs-btn-default" id="qibbs-bp-refresh-btn" title="<?php esc_attr_e( '刷新背包', 'qibbs-community' ); ?>">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
@@ -438,6 +449,16 @@ if ( ! isset( $is_vanity_view ) ) {
                 </div>
             </div>
 
+            <div class="qibbs-buy-equip-toggle-box">
+                <label class="qibbs-buy-equip-label" for="qibbs-buy-auto-equip-toggle">
+                    <input type="checkbox" id="qibbs-buy-auto-equip-toggle" value="1">
+                    <span><?php esc_html_e( '兑换后立即佩戴生效', 'qibbs-community' ); ?></span>
+                </label>
+                <div class="qibbs-buy-equip-tip">
+                    <?php esc_html_e( '默认不勾选：仅购买存入背包，不影响您当前正在使用的号码。', 'qibbs-community' ); ?>
+                </div>
+            </div>
+
             <div class="qibbs-modal-alert qibbs-alert-danger" id="qibbs-buy-insufficient-alert" style="display:none;">
                 <?php printf( esc_html__( '您的账户%s不足，您可选择现金直接购买或充值后兑换。', 'qibbs-community' ), esc_html( $points_name ) ); ?>
             </div>
@@ -445,10 +466,74 @@ if ( ! isset( $is_vanity_view ) ) {
         <div class="qibbs-vanity-modal-footer">
             <button type="button" class="qibbs-btn qibbs-btn-default" data-modal-close><?php esc_html_e( '取消', 'qibbs-community' ); ?></button>
             <button type="button" class="qibbs-btn qibbs-btn-success" id="qibbs-cash-buy-direct-btn" style="display:none;">
-                <span class="qibbs-btn-label"><?php esc_html_e( '现金直接购买', 'qibbs-community' ); ?></span>
+                <span class="qibbs-btn-label"><?php esc_html_e( '现金支付', 'qibbs-community' ); ?></span>
             </button>
             <button type="button" class="qibbs-btn qibbs-btn-primary" id="qibbs-confirm-buy-btn">
-                <span class="qibbs-btn-label"><?php echo esc_html( $points_name ); ?><?php esc_html_e( '兑换并佩戴', 'qibbs-community' ); ?></span>
+                <span class="qibbs-btn-label"><?php echo esc_html( $points_name ); ?><?php esc_html_e( '兑换（存入背包）', 'qibbs-community' ); ?></span>
+                <span class="qibbs-btn-loading-spinner" style="display:none;"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== 交互弹窗：玩家 C2C 寄售购买确认 ==================== -->
+<div class="qibbs-vanity-modal-backdrop" id="qibbs-c2c-buy-modal" style="display:none;">
+    <div class="qibbs-vanity-modal">
+        <div class="qibbs-vanity-modal-header">
+            <h3><?php esc_html_e( '选购玩家寄售靓号', 'qibbs-community' ); ?></h3>
+            <button type="button" class="qibbs-modal-close" data-modal-close>&times;</button>
+        </div>
+        <div class="qibbs-vanity-modal-body">
+            <!-- 寄售卖家专属信息卡 -->
+            <div class="qibbs-c2c-modal-seller-card">
+                <img id="qibbs-c2c-buy-seller-avatar" src="" alt="" class="qibbs-seller-avatar">
+                <div class="qibbs-c2c-modal-seller-meta">
+                    <div class="qibbs-c2c-modal-seller-row">
+                        <span class="qibbs-c2c-modal-seller-label"><?php esc_html_e( '寄售卖家', 'qibbs-community' ); ?></span>
+                        <strong id="qibbs-c2c-buy-seller-name" class="qibbs-c2c-modal-seller-name"></strong>
+                        <span class="qibbs-card-c2c-tag"><?php esc_html_e( '玩家寄售', 'qibbs-community' ); ?></span>
+                    </div>
+                    <div class="qibbs-c2c-modal-seller-time" id="qibbs-c2c-buy-seller-time"></div>
+                </div>
+            </div>
+
+            <!-- 号码卡片 -->
+            <div class="qibbs-modal-cuid-card">
+                <div class="qibbs-modal-grade-tag" id="qibbs-c2c-buy-grade-tag"></div>
+                <div class="qibbs-modal-cuid-num" id="qibbs-c2c-buy-cuid-num">00000</div>
+                <div class="qibbs-modal-cuid-hint"><?php esc_html_e( '购买后号码将立即过户至您的背包，可在号码背包随时一键佩戴', 'qibbs-community' ); ?></div>
+            </div>
+
+            <!-- 价格明细 -->
+            <div class="qibbs-modal-cost-breakdown">
+                <div class="qibbs-cost-row" id="qibbs-c2c-buy-points-price-row">
+                    <span><?php echo esc_html( $points_name ); ?><?php esc_html_e( '售价', 'qibbs-community' ); ?></span>
+                    <strong class="qibbs-cost-price" id="qibbs-c2c-buy-price-display">0 <?php echo esc_html( $points_name ); ?></strong>
+                </div>
+                <div class="qibbs-cost-row" id="qibbs-c2c-buy-cash-price-row" style="display:none;">
+                    <span><?php esc_html_e( '现金直购价', 'qibbs-community' ); ?></span>
+                    <strong class="qibbs-cost-cash" id="qibbs-c2c-buy-cash-price-display" style="color:#ef4444;font-size:16px;">¥0.00</strong>
+                </div>
+                <div class="qibbs-cost-row" id="qibbs-c2c-buy-user-balance-row">
+                    <span><?php esc_html_e( '您的当前', 'qibbs-community' ); ?><?php echo esc_html( $points_name ); ?></span>
+                    <span id="qibbs-c2c-buy-balance-display">0 <?php echo esc_html( $points_name ); ?></span>
+                </div>
+                <div class="qibbs-cost-row qibbs-cost-after" id="qibbs-c2c-buy-remain-row">
+                    <span><?php echo esc_html( $points_name ); ?><?php esc_html_e( '支付后剩余', 'qibbs-community' ); ?></span>
+                    <span id="qibbs-c2c-buy-remain-display">0 <?php echo esc_html( $points_name ); ?></span>
+                </div>
+            </div>
+
+            <!-- 余额不足警示 / 提示 -->
+            <div class="qibbs-modal-alert qibbs-alert-danger" id="qibbs-c2c-buy-insufficient-alert" style="display:none;"></div>
+        </div>
+        <div class="qibbs-vanity-modal-footer">
+            <button type="button" class="qibbs-btn qibbs-btn-default" data-modal-close><?php esc_html_e( '取消', 'qibbs-community' ); ?></button>
+            <button type="button" class="qibbs-btn qibbs-btn-success" id="qibbs-c2c-cash-buy-direct-btn" style="display:none;">
+                <span class="qibbs-btn-label"><?php esc_html_e( '现金支付', 'qibbs-community' ); ?></span>
+            </button>
+            <button type="button" class="qibbs-btn qibbs-btn-primary" id="qibbs-c2c-confirm-buy-btn">
+                <span class="qibbs-btn-label"><?php echo esc_html( $points_name ); ?><?php esc_html_e( '购买（存入背包）', 'qibbs-community' ); ?></span>
                 <span class="qibbs-btn-loading-spinner" style="display:none;"></span>
             </button>
         </div>

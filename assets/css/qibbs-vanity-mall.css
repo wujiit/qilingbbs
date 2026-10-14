@@ -735,18 +735,56 @@
 }
 
 .qibbs-bp-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid var(--qibbs-border-light, #f1f5f9);
 }
 
+.qibbs-bp-actions .qibbs-equip-btn,
+.qibbs-bp-actions .qibbs-delist-c2c-btn {
+    grid-column: 1 / -1;
+}
+
+.qibbs-bp-actions .qibbs-btn {
+    width: 100% !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+}
+
+.qibbs-bp-actions .qibbs-btn-default {
+    border: 1px solid var(--qibbs-border, #cbd5e1) !important;
+    background: var(--qibbs-bg-card, #ffffff) !important;
+    color: var(--qibbs-text, #334155) !important;
+}
+
+.qibbs-bp-actions .qibbs-btn-primary,
+.qibbs-bp-actions .qibbs-btn-success,
+.qibbs-bp-actions .qibbs-btn-danger,
+.qibbs-bp-actions .qibbs-btn-warning {
+    border: 1px solid transparent !important;
+}
+
 .qibbs-bp-hint-text {
+    grid-column: 1 / -1;
     font-size: 12px;
     color: #94a3b8;
-    padding: 4px 0;
+    padding: 8px 0;
+    text-align: center;
+    width: 100%;
 }
 
 /* 游客准入限制 */
@@ -872,10 +910,14 @@
     background: var(--qibbs-bg-card, #ffffff);
     border-radius: 16px;
     width: 100%;
-    max-width: 440px;
+    max-width: 540px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     overflow: hidden;
     animation: qibbsModalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
 }
 
 @keyframes qibbsModalPop {
@@ -895,6 +937,7 @@
     justify-content: space-between;
     padding: 18px 24px;
     border-bottom: 1px solid var(--qibbs-border, #e2e8f0);
+    flex-shrink: 0;
 }
 
 .qibbs-vanity-modal-header h3 {
@@ -921,6 +964,9 @@
 
 .qibbs-vanity-modal-body {
     padding: 24px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
 }
 
 .qibbs-modal-cuid-card {
@@ -992,9 +1038,41 @@
     border-top: 1px dashed var(--qibbs-border, #e2e8f0);
 }
 
-.qibbs-recycle-amount {
-    font-size: 18px;
-    color: #10b981;
+.qibbs-buy-equip-toggle-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: var(--qibbs-bg, #f8fafc);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.qibbs-buy-equip-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--qibbs-text, #1e293b);
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+}
+
+.qibbs-buy-equip-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--qibbs-primary, #6366f1);
+    margin: 0;
+}
+
+.qibbs-buy-equip-tip {
+    font-size: 12px;
+    color: var(--qibbs-text-secondary, #64748b);
+    padding-left: 24px;
+    margin-top: 4px;
+    line-height: 1.4;
 }
 
 .qibbs-modal-alert {
@@ -1003,6 +1081,91 @@
     font-size: 12px;
     line-height: 1.5;
     margin-top: 12px;
+}
+
+/* C2C 购买弹窗卖家信息卡 */
+.qibbs-c2c-modal-seller-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--qibbs-bg, #f8fafc);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.qibbs-c2c-modal-seller-card .qibbs-seller-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+}
+
+.qibbs-c2c-modal-seller-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.qibbs-c2c-modal-seller-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    line-height: 1.3;
+}
+
+.qibbs-c2c-modal-seller-label {
+    font-size: 12px;
+    color: var(--qibbs-text-secondary, #64748b);
+}
+
+.qibbs-c2c-modal-seller-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--qibbs-text, #0f172a);
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.qibbs-c2c-modal-seller-time {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 3px;
+}
+
+/* 自定义确认对话框 */
+.qibbs-confirm-dialog-box {
+    max-width: 440px !important;
+}
+
+.qibbs-confirm-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.qibbs-confirm-icon.qibbs-confirm-warning {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.qibbs-confirm-icon.qibbs-confirm-danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.qibbs-confirm-icon.qibbs-confirm-info {
+    background: #e0f2fe;
+    color: #0284c7;
 }
 
 .qibbs-alert-danger {
@@ -1059,10 +1222,17 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 12px;
     padding: 16px 24px;
     background: var(--qibbs-bg, #f8fafc);
     border-top: 1px solid var(--qibbs-border, #e2e8f0);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.qibbs-vanity-modal-footer .qibbs-btn-default[data-modal-close] {
+    margin-right: auto;
 }
 
 /* 按钮及弹窗主色系高对比度统一 */
@@ -1081,13 +1251,14 @@
     text-decoration: none;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     box-sizing: border-box;
 }
 
 .qibbs-vanity-mall-container .qibbs-btn-primary,
 .qibbs-vanity-modal .qibbs-btn-primary {
-    background: var(--qibbs-gradient-primary, var(--qibbs-primary)) !important;
+    background-color: var(--qibbs-primary, #6366f1) !important;
+    background-image: var(--qibbs-gradient-primary, linear-gradient(135deg, var(--qibbs-primary, #6366f1) 0%, var(--qibbs-primary-hover, #4f46e5) 100%)) !important;
     color: #ffffff !important;
     border-color: transparent !important;
     box-shadow: 0 4px 14px -2px var(--qibbs-primary-glow, rgba(99, 102, 241, 0.35)) !important;
@@ -1095,10 +1266,16 @@
 
 .qibbs-vanity-mall-container .qibbs-btn-primary:hover:not(:disabled),
 .qibbs-vanity-modal .qibbs-btn-primary:hover:not(:disabled) {
-    background: var(--qibbs-primary-hover) !important;
     color: #ffffff !important;
     transform: translateY(-1px);
+    filter: brightness(0.92);
     box-shadow: 0 6px 18px -2px var(--qibbs-primary-glow, rgba(99, 102, 241, 0.45)) !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-primary:active:not(:disabled),
+.qibbs-vanity-modal .qibbs-btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    filter: brightness(0.85);
 }
 
 .qibbs-vanity-mall-container .qibbs-btn-primary *,
@@ -1489,6 +1666,85 @@
     }
 }
 
+@media (max-width: 560px) {
+    .qibbs-vanity-modal-backdrop {
+        padding: 12px;
+        align-items: center;
+    }
+
+    .qibbs-vanity-modal {
+        max-width: 100%;
+        max-height: 92vh;
+        border-radius: 14px;
+    }
+
+    .qibbs-vanity-modal-header {
+        padding: 14px 18px;
+    }
+
+    .qibbs-vanity-modal-header h3 {
+        font-size: 16px;
+    }
+
+    .qibbs-vanity-modal-body {
+        padding: 16px;
+    }
+
+    .qibbs-modal-cuid-card {
+        padding: 14px 12px;
+        margin-bottom: 14px;
+    }
+
+    .qibbs-modal-cuid-num {
+        font-size: 26px;
+    }
+
+    .qibbs-modal-cost-breakdown {
+        padding: 12px;
+        gap: 6px;
+    }
+
+    .qibbs-buy-equip-toggle-box {
+        margin-top: 12px;
+        padding: 10px 12px;
+    }
+
+    .qibbs-buy-equip-label {
+        font-size: 13px;
+    }
+
+    .qibbs-buy-equip-tip {
+        font-size: 11px;
+        padding-left: 24px;
+    }
+
+    /* 移动端底栏：垂直堆叠，按钮 100% 宽度，触摸热区 44px 舒适可点 */
+    .qibbs-vanity-modal-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+
+    .qibbs-vanity-modal-footer .qibbs-btn {
+        width: 100%;
+        min-height: 44px;
+        font-size: 15px;
+        padding: 0 16px;
+        margin-right: 0 !important;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .qibbs-vanity-modal-footer .qibbs-btn-default {
+        min-height: 38px;
+        background: transparent !important;
+        border-color: transparent !important;
+        color: var(--qibbs-text-secondary, #64748b) !important;
+        font-size: 14px;
+    }
+}
+
 @media (max-width: 480px) {
     .qibbs-vanity-grid {
         grid-template-columns: 1fr;
@@ -1537,12 +1793,14 @@
 }
 [data-qibbs-theme="default"] .qibbs-btn-primary,
 :root:not([data-qibbs-theme]) .qibbs-btn-primary {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    background-color: #6366f1 !important;
+    background-image: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
     box-shadow: 0 4px 14px -2px rgba(99, 102, 241, 0.38) !important;
 }
 [data-qibbs-theme="default"] .qibbs-btn-primary:hover:not(:disabled),
 :root:not([data-qibbs-theme]) .qibbs-btn-primary:hover:not(:disabled) {
-    background: #4338ca !important;
+    filter: brightness(0.92) !important;
+    transform: translateY(-1px);
 }
 
 /* 2. 小清新风格（翡翠薄荷 / Emerald & Mint） */
@@ -1576,11 +1834,13 @@
     box-shadow: 0 12px 24px -4px rgba(16, 185, 129, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
 }
 [data-qibbs-theme="fresh"] .qibbs-btn-primary {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    background-color: #10b981 !important;
+    background-image: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
     box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.38) !important;
 }
 [data-qibbs-theme="fresh"] .qibbs-btn-primary:hover:not(:disabled) {
-    background: #047857 !important;
+    filter: brightness(0.92) !important;
+    transform: translateY(-1px);
 }
 
 /* 3. 科技风格（极光电光蓝 / Cyber Sky & Blue） */
@@ -1614,11 +1874,13 @@
     box-shadow: 0 12px 24px -4px rgba(14, 165, 233, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
 }
 [data-qibbs-theme="tech"] .qibbs-btn-primary {
-    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+    background-color: #0ea5e9 !important;
+    background-image: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
     box-shadow: 0 4px 14px -2px rgba(14, 165, 233, 0.38) !important;
 }
 [data-qibbs-theme="tech"] .qibbs-btn-primary:hover:not(:disabled) {
-    background: #0369a1 !important;
+    filter: brightness(0.92) !important;
+    transform: translateY(-1px);
 }
 
 /* 4. 游戏风格（赛博朋克电竞烈焰玫瑰 / Cyberpunk Crimson & Neon Rose） */
@@ -1652,11 +1914,13 @@
     box-shadow: 0 12px 24px -4px rgba(244, 63, 94, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
 }
 [data-qibbs-theme="gaming"] .qibbs-btn-primary {
-    background: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%) !important;
+    background-color: #f43f5e !important;
+    background-image: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%) !important;
     box-shadow: 0 4px 14px -2px rgba(244, 63, 94, 0.38) !important;
 }
 [data-qibbs-theme="gaming"] .qibbs-btn-primary:hover:not(:disabled) {
-    background: #be123c !important;
+    filter: brightness(0.92) !important;
+    transform: translateY(-1px);
 }
 
 /* ==================== 11. 交易大厅全套暗黑模式适配 ==================== */
@@ -1764,4 +2028,65 @@ body.qibbs-dark-mode .qibbs-vanity-modal-footer,
 html[data-theme="dark"] .qibbs-vanity-modal-footer {
     background: #1e293b;
     border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark-mode .qibbs-buy-equip-toggle-box,
+body.qibbs-dark-mode .qibbs-buy-equip-toggle-box,
+html[data-theme="dark"] .qibbs-buy-equip-toggle-box {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark-mode .qibbs-buy-equip-label,
+body.qibbs-dark-mode .qibbs-buy-equip-label,
+html[data-theme="dark"] .qibbs-buy-equip-label {
+    color: #f1f5f9 !important;
+}
+
+html.dark-mode .qibbs-buy-equip-tip,
+body.qibbs-dark-mode .qibbs-buy-equip-tip,
+html[data-theme="dark"] .qibbs-buy-equip-tip {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .qibbs-bp-actions .qibbs-btn-default,
+body.qibbs-dark-mode .qibbs-bp-actions .qibbs-btn-default,
+html[data-theme="dark"] .qibbs-bp-actions .qibbs-btn-default {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .qibbs-c2c-modal-seller-card,
+body.qibbs-dark-mode .qibbs-c2c-modal-seller-card,
+html[data-theme="dark"] .qibbs-c2c-modal-seller-card {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark-mode .qibbs-c2c-modal-seller-name,
+body.qibbs-dark-mode .qibbs-c2c-modal-seller-name,
+html[data-theme="dark"] .qibbs-c2c-modal-seller-name {
+    color: #f1f5f9 !important;
+}
+
+html.dark-mode .qibbs-confirm-icon.qibbs-confirm-warning,
+body.qibbs-dark-mode .qibbs-confirm-icon.qibbs-confirm-warning,
+html[data-theme="dark"] .qibbs-confirm-icon.qibbs-confirm-warning {
+    background: rgba(217, 119, 6, 0.2) !important;
+    color: #fbbf24 !important;
+}
+
+html.dark-mode .qibbs-confirm-icon.qibbs-confirm-danger,
+body.qibbs-dark-mode .qibbs-confirm-icon.qibbs-confirm-danger,
+html[data-theme="dark"] .qibbs-confirm-icon.qibbs-confirm-danger {
+    background: rgba(220, 38, 38, 0.2) !important;
+    color: #f87171 !important;
+}
+
+html.dark-mode .qibbs-confirm-icon.qibbs-confirm-info,
+body.qibbs-dark-mode .qibbs-confirm-icon.qibbs-confirm-info,
+html[data-theme="dark"] .qibbs-confirm-icon.qibbs-confirm-info {
+    background: rgba(2, 132, 199, 0.2) !important;
+    color: #38bdf8 !important;
 }
