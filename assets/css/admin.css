@@ -1,0 +1,215 @@
+/**
+ * 启灵微社区后台管理样式
+ */
+
+body.qibbs-admin-shell {
+    --qibbs-admin-bg: #f5f7fc;
+    --qibbs-admin-surface: #ffffff;
+    --qibbs-admin-border: #d8deea;
+    --qibbs-admin-border-soft: #e7ebf3;
+    --qibbs-admin-text: #1f2937;
+    --qibbs-admin-text-soft: #566174;
+    --qibbs-admin-primary: #1f6feb;
+    --qibbs-admin-primary-strong: #0f4fbf;
+    --qibbs-admin-shadow: 0 8px 28px rgba(16, 24, 40, 0.08);
+    background: radial-gradient(circle at top left, #eef3ff 0, #f6f8fd 42%, #f5f7fc 100%);
+}
+
+body.qibbs-admin-shell #wpcontent {
+    background: transparent;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page {
+    max-width: none;
+    width: auto;
+    margin: 14px 20px 0 0;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page > h1 {
+    margin: 0 0 14px;
+    padding: 14px 18px;
+    border: 1px solid var(--qibbs-admin-border);
+    border-radius: 14px;
+    background: linear-gradient(140deg, #1f6feb 0%, #0b57d0 100%);
+    color: #fff;
+    box-shadow: var(--qibbs-admin-shadow);
+    line-height: 1.4;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page > .wp-heading-inline {
+    float: none;
+    display: block;
+    margin-right: 0;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page > .wp-header-end {
+    margin: 14px 0 18px;
+    border-bottom-color: var(--qibbs-admin-border);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page > h1 .wp-heading-inline {
+    color: #fff;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page > h1 a {
+    color: #fff;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .nav-tab-wrapper {
+    margin: 0 0 16px;
+    border-bottom: 1px solid var(--qibbs-admin-border);
+    padding: 8px;
+    border-radius: 12px;
+    background: #edf2ff;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .nav-tab {
+    border: 1px solid transparent;
+    border-radius: 8px;
+    margin: 0 6px 0 0;
+    background: transparent;
+    color: #334155;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .nav-tab-active,
+body.qibbs-admin-shell .qibbs-admin-page .nav-tab-active:focus,
+body.qibbs-admin-shell .qibbs-admin-page .nav-tab-active:focus:active,
+body.qibbs-admin-shell .qibbs-admin-page .nav-tab-active:hover {
+    border-color: var(--qibbs-admin-border);
+    background: #fff;
+    color: #0b57d0;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .notice {
+    border-radius: 8px;
+    border: 1px solid var(--qibbs-admin-border);
+    box-shadow: none;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .wp-list-table {
+    border: 1px solid var(--qibbs-admin-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .wp-list-table th,
+body.qibbs-admin-shell .qibbs-admin-page .wp-list-table td {
+    border-bottom-color: var(--qibbs-admin-border-soft);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .wp-list-table thead th {
+    background: #f8faff;
+    color: #334155;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .wp-list-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .form-table th {
+    width: 220px;
+    color: var(--qibbs-admin-text);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .form-table td {
+    color: var(--qibbs-admin-text-soft);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .form-table .description {
+    color: #64748b;
+    font-style: normal;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page select,
+body.qibbs-admin-shell .qibbs-admin-page input[type="text"],
+body.qibbs-admin-shell .qibbs-admin-page input[type="number"],
+body.qibbs-admin-shell .qibbs-admin-page input[type="search"],
+body.qibbs-admin-shell .qibbs-admin-page textarea {
+    border-color: var(--qibbs-admin-border);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page select:focus,
+body.qibbs-admin-shell .qibbs-admin-page input[type="text"]:focus,
+body.qibbs-admin-shell .qibbs-admin-page input[type="number"]:focus,
+body.qibbs-admin-shell .qibbs-admin-page input[type="search"]:focus,
+body.qibbs-admin-shell .qibbs-admin-page textarea:focus {
+    border-color: var(--qibbs-admin-primary);
+    box-shadow: 0 0 0 1px var(--qibbs-admin-primary);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .button-primary {
+    background: linear-gradient(140deg, var(--qibbs-admin-primary) 0%, var(--qibbs-admin-primary-strong) 100%);
+    border-color: var(--qibbs-admin-primary-strong);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .button-primary:hover,
+body.qibbs-admin-shell .qibbs-admin-page .button-primary:focus {
+    border-color: var(--qibbs-admin-primary-strong);
+    filter: brightness(0.96);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .postbox {
+    border: 1px solid var(--qibbs-admin-border);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .postbox .postbox-header {
+    border-bottom-color: var(--qibbs-admin-border-soft);
+    background: #fafcff;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page [style*="background: #fff"],
+body.qibbs-admin-shell .qibbs-admin-page [style*="background:#fff"] {
+    border-color: var(--qibbs-admin-border) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+}
+
+body.qibbs-admin-shell .qibbs-admin-page .tablenav .actions select {
+    min-width: 160px;
+}
+
+.qibbs-admin-topnav-wrap {
+    margin: 10px 20px 0 0;
+}
+
+.qibbs-admin-topnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--qibbs-admin-border);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+}
+
+.qibbs-admin-topnav-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--qibbs-admin-border-soft);
+    background: #f8faff;
+    color: #334155;
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.qibbs-admin-topnav-link:hover {
+    border-color: #bfd2ff;
+    color: #0b57d0;
+}
+
+.qibbs-admin-topnav-link.is-active {
+    border-color: transparent;
+    background: linear-gradient(140deg, #1f6feb 0%, #0b57d0 100%);
+    color: #fff;
+}
+
+.qibbs-admin-wrap {
+    max-width: 800px;
+}

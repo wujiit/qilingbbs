@@ -1,0 +1,1767 @@
+/**
+ * 启灵微社区 - 靓号交易大厅与商城专属高级样式表
+ * 包含官方货架、C2C寄售大厅、个人号码背包、品相渐变徽章及全套响应式弹窗
+ *
+ * @package Qibbs_Community
+ * @subpackage Assets/CSS
+ */
+
+/* ==================== 1. 容器与 Hero 头部区域 ==================== */
+.qibbs-vanity-mall-container {
+    width: 100%;
+    margin-bottom: 30px;
+    animation: qibbsFadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qibbsFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.qibbs-vanity-hero {
+    background: var(--qibbs-gradient-hero, linear-gradient(135deg, #18182f 0%, #2e1b4d 55%, #1e1b4b 100%));
+    color: #ffffff;
+    border-radius: var(--qibbs-radius, 16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25), 0 8px 10px -6px rgba(15, 23, 42, 0.15);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    transition: background 0.3s ease;
+}
+
+.qibbs-vanity-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, var(--qibbs-primary, #6366f1) 0%, transparent 70%);
+    opacity: 0.25;
+    pointer-events: none;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.qibbs-vanity-hero-content {
+    flex: 1 1 300px;
+    z-index: 1;
+}
+
+.qibbs-vanity-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--qibbs-hero-badge-bg, rgba(255, 255, 255, 0.12));
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--qibbs-hero-badge-border, rgba(255, 255, 255, 0.2));
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--qibbs-hero-badge-color, #fbbf24);
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.qibbs-vanity-hero-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+}
+
+.qibbs-vanity-hero-sub {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin: 0;
+    line-height: 1.5;
+    max-width: 520px;
+}
+
+.qibbs-vanity-user-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 12px 16px;
+    z-index: 1;
+}
+
+.qibbs-user-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.qibbs-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.qibbs-summary-label {
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.qibbs-summary-val {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.qibbs-summary-cuid {
+    color: #fcd34d;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+}
+
+.qibbs-summary-points {
+    color: #ffffff;
+}
+
+.qibbs-summary-divider {
+    width: 1px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.qibbs-guest-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.qibbs-guest-hint {
+    margin: 0;
+    font-size: 13px;
+    color: #e2e8f0;
+}
+
+/* ==================== 2. 主 Tab 导航控制 ==================== */
+.qibbs-vanity-tabs-wrapper {
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--qibbs-border, #e2e8f0);
+}
+
+.qibbs-vanity-tabs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.qibbs-vanity-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.qibbs-vanity-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 12px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--qibbs-text-secondary, #64748b);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap !important;
+    margin-bottom: -2px;
+    flex-shrink: 0;
+}
+
+.qibbs-vanity-tab span {
+    white-space: nowrap !important;
+}
+
+.qibbs-vanity-tab:hover {
+    color: var(--qibbs-primary-hover, var(--qibbs-primary));
+}
+
+.qibbs-vanity-tab.active {
+    color: var(--qibbs-primary);
+    border-bottom-color: var(--qibbs-primary);
+}
+
+.qibbs-tab-badge {
+    display: inline-block;
+    background: var(--qibbs-bg-hover, #f1f5f9);
+    color: var(--qibbs-text-secondary, #64748b);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.qibbs-vanity-tab.active .qibbs-tab-badge {
+    background: var(--qibbs-primary-light);
+    color: var(--qibbs-primary);
+}
+
+.qibbs-vanity-pane {
+    display: none;
+}
+
+.qibbs-vanity-pane.is-active {
+    display: block;
+    animation: qibbsPaneFade 0.2s ease;
+}
+
+@keyframes qibbsPaneFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ==================== 3. 筛选与操作工具栏 ==================== */
+.qibbs-vanity-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+    background: var(--qibbs-bg-card, #ffffff);
+    padding: 12px 16px;
+    border-radius: var(--qibbs-radius-sm, 10px);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+}
+
+.qibbs-grade-pills {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.qibbs-grade-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--qibbs-bg, #f8fafc);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 20px;
+    padding: 6px 13px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--qibbs-text-secondary, #64748b);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.qibbs-grade-pill:hover {
+    background: var(--qibbs-bg-hover, #f1f5f9);
+    color: var(--qibbs-text, #0f172a);
+    border-color: #cbd5e1;
+}
+
+.qibbs-grade-pill.active {
+    background: var(--qibbs-gradient-primary, var(--qibbs-primary));
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 2px 8px -1px var(--qibbs-primary-glow, rgba(99, 102, 241, 0.32));
+}
+
+.qibbs-pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.qibbs-grade-dot-1 { background: #f59e0b; }
+.qibbs-grade-dot-2 { background: #8b5cf6; }
+.qibbs-grade-dot-3 { background: #3b82f6; }
+.qibbs-grade-dot-4 { background: #10b981; }
+
+.qibbs-toolbar-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.qibbs-search-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.qibbs-search-control input {
+    width: 220px;
+    padding: 7px 32px 7px 12px;
+    font-size: 13px;
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 8px;
+    background: var(--qibbs-bg, #f8fafc);
+    color: var(--qibbs-text, #0f172a);
+    transition: all 0.2s ease;
+}
+
+.qibbs-search-control input:focus {
+    width: 260px;
+    outline: none;
+    border-color: var(--qibbs-primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px var(--qibbs-primary-glow, rgba(99, 102, 241, 0.18));
+}
+
+.qibbs-search-control svg {
+    position: absolute;
+    right: 10px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.qibbs-sort-control select,
+.qibbs-currency-control select {
+    padding: 7px 12px;
+    font-size: 13px;
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 8px;
+    background: var(--qibbs-bg, #f8fafc);
+    color: var(--qibbs-text, #0f172a);
+    cursor: pointer;
+}
+
+.qibbs-sort-control select:focus,
+.qibbs-currency-control select:focus {
+    outline: none;
+    border-color: var(--qibbs-primary, #6366f1);
+}
+
+/* 成交动态类型分段胶囊筛选器 */
+.qibbs-c2c-type-filter {
+    display: inline-flex;
+    align-items: center;
+    background: var(--qibbs-bg, #f1f5f9);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 24px;
+    padding: 3px;
+    gap: 2px;
+}
+
+.qibbs-type-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    outline: none;
+    border-radius: 18px;
+    padding: 5px 13px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--qibbs-text-secondary, #64748b);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    line-height: 1.3;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.qibbs-type-filter-btn:hover {
+    color: var(--qibbs-text, #0f172a);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.qibbs-type-filter-btn.active {
+    background: var(--qibbs-primary);
+    color: #ffffff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 6px -1px var(--qibbs-primary-glow, rgba(99, 102, 241, 0.3));
+}
+
+.qibbs-c2c-guarantee-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+/* ==================== 4. 靓号与 C2C 卡片网格 ==================== */
+.qibbs-vanity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.qibbs-vanity-card {
+    background: var(--qibbs-bg-card, #ffffff);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+}
+
+.qibbs-vanity-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    border-color: #cbd5e1;
+}
+
+/* 品相等级边框与渐变高亮 */
+.qibbs-vanity-card.qibbs-grade-level-1 {
+    border-top: 3px solid #f59e0b;
+}
+.qibbs-vanity-card.qibbs-grade-level-1:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 12px 24px -4px rgba(245, 158, 11, 0.18);
+}
+
+.qibbs-vanity-card.qibbs-grade-level-2 {
+    border-top: 3px solid #8b5cf6;
+}
+.qibbs-vanity-card.qibbs-grade-level-2:hover {
+    border-color: #8b5cf6;
+    box-shadow: 0 12px 24px -4px rgba(139, 92, 246, 0.18);
+}
+
+.qibbs-vanity-card.qibbs-grade-level-3 {
+    border-top: 3px solid #3b82f6;
+}
+.qibbs-vanity-card.qibbs-grade-level-3:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 12px 24px -4px rgba(59, 130, 246, 0.18);
+}
+
+.qibbs-vanity-card.qibbs-grade-level-4 {
+    border-top: 3px solid #10b981;
+}
+
+.qibbs-vanity-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.qibbs-card-grade-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+}
+
+.qibbs-grade-level-1 .qibbs-card-grade-badge {
+    background: #fef3c7;
+    color: #b45309;
+}
+.qibbs-grade-level-2 .qibbs-card-grade-badge {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+.qibbs-grade-level-3 .qibbs-card-grade-badge {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+.qibbs-grade-level-4 .qibbs-card-grade-badge {
+    background: #d1fae5;
+    color: #047857;
+}
+.qibbs-grade-level-default .qibbs-card-grade-badge {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.qibbs-card-official-tag,
+.qibbs-card-c2c-tag,
+.qibbs-card-mine-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.qibbs-card-official-tag {
+    background: #eff6ff;
+    color: #2563eb;
+}
+.qibbs-card-c2c-tag {
+    background: #ecfdf5;
+    color: #059669;
+}
+.qibbs-card-mine-tag {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+/* 核心号码字体呈现 */
+.qibbs-vanity-card-num,
+.qibbs-bp-cuid-num,
+.qibbs-modal-cuid-num {
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, 'Roboto Mono', monospace;
+    font-feature-settings: 'tnum';
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--qibbs-text, #0f172a);
+    margin: 4px 0 14px 0;
+    letter-spacing: 0.5px;
+    word-break: break-all;
+}
+
+.qibbs-cuid-prefix {
+    font-size: 18px;
+    color: #94a3b8;
+    margin-right: 2px;
+}
+
+.qibbs-grade-level-1 .qibbs-vanity-card-num {
+    background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.qibbs-grade-level-2 .qibbs-vanity-card-num {
+    background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 50%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* 价格区域 */
+.qibbs-vanity-card-prices {
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.qibbs-price-points {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--qibbs-text, #0f172a);
+}
+
+.qibbs-price-points strong {
+    font-size: 17px;
+    font-weight: 800;
+    color: #d97706;
+}
+
+.qibbs-price-cash {
+    font-size: 13px;
+    color: #e11d48;
+}
+
+.qibbs-price-cash strong {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.qibbs-currency-symbol {
+    font-size: 13px;
+    margin-right: 2px;
+}
+
+/* C2C 卖家信息 */
+.qibbs-c2c-seller-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--qibbs-border, #e2e8f0);
+}
+
+.qibbs-seller-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.qibbs-seller-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.qibbs-seller-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--qibbs-text, #0f172a);
+}
+
+.qibbs-seller-time {
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* ==================== 5. 号码背包专属样式 ==================== */
+.qibbs-backpack-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--qibbs-bg-card, #ffffff);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: var(--qibbs-radius-sm, 10px);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.qibbs-backpack-header-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--qibbs-text, #0f172a);
+}
+
+.qibbs-backpack-header-info p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--qibbs-text-secondary, #64748b);
+}
+
+.qibbs-backpack-header-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.qibbs-bp-stat-pill {
+    background: var(--qibbs-bg, #f8fafc);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--qibbs-text-secondary, #64748b);
+}
+
+.qibbs-backpack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.qibbs-backpack-card {
+    background: var(--qibbs-bg-card, #ffffff);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.qibbs-backpack-card.is-equipped {
+    border-color: #f59e0b;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);
+    background: linear-gradient(180deg, #fffbeb 0%, #ffffff 60%);
+}
+
+.qibbs-bp-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.qibbs-bp-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.qibbs-bp-status-equipped {
+    background: #fef3c7;
+    color: #b45309;
+}
+.qibbs-bp-status-listed {
+    background: #ecfdf5;
+    color: #059669;
+}
+.qibbs-bp-status-idle {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.qibbs-bp-listed-price {
+    font-size: 12px;
+    color: #059669;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.qibbs-bp-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--qibbs-border-light, #f1f5f9);
+}
+
+.qibbs-bp-hint-text {
+    font-size: 12px;
+    color: #94a3b8;
+    padding: 4px 0;
+}
+
+/* 游客准入限制 */
+.qibbs-vanity-auth-gate {
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.qibbs-auth-gate-card {
+    max-width: 420px;
+    text-align: center;
+    background: var(--qibbs-bg-card, #ffffff);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 16px;
+    padding: 36px 28px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.qibbs-auth-gate-card h3 {
+    margin: 16px 0 8px 0;
+    font-size: 20px;
+    color: var(--qibbs-text, #0f172a);
+}
+
+.qibbs-auth-gate-card p {
+    color: var(--qibbs-text-secondary, #64748b);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 24px 0;
+}
+
+/* ==================== 6. 加载、空态与通用交互组件 ==================== */
+.qibbs-vanity-loading,
+.qibbs-vanity-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--qibbs-text-secondary, #64748b);
+}
+
+.qibbs-vanity-loading .qibbs-spinner,
+.qibbs-vanity-empty .qibbs-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--qibbs-border, #e2e8f0);
+    border-top-color: var(--qibbs-primary, #6366f1);
+    border-radius: 50%;
+    margin: 0 auto 12px auto;
+    animation: qibbsSpin 0.7s linear infinite;
+}
+
+@keyframes qibbsSpin {
+    to { transform: rotate(360deg); }
+}
+
+.qibbs-vanity-empty svg {
+    color: #cbd5e1;
+    margin-bottom: 12px;
+}
+
+.qibbs-vanity-empty p {
+    margin: 0 0 16px 0;
+    font-size: 15px;
+}
+
+/* 分页控件 */
+.qibbs-vanity-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.qibbs-page-prev,
+.qibbs-page-next {
+    padding: 7px 16px;
+    background: var(--qibbs-bg-card, #ffffff);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--qibbs-text, #0f172a);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.qibbs-page-prev:hover:not(:disabled),
+.qibbs-page-next:hover:not(:disabled) {
+    background: var(--qibbs-bg-hover, #f1f5f9);
+    border-color: #cbd5e1;
+}
+
+.qibbs-page-prev:disabled,
+.qibbs-page-next:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.qibbs-page-info {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--qibbs-text-secondary, #64748b);
+}
+
+/* ==================== 7. 全局模态交互弹窗 ==================== */
+.qibbs-vanity-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(6px);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.qibbs-vanity-modal {
+    background: var(--qibbs-bg-card, #ffffff);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: qibbsModalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qibbsModalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.94);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.qibbs-vanity-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--qibbs-border, #e2e8f0);
+}
+
+.qibbs-vanity-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--qibbs-text, #0f172a);
+}
+
+.qibbs-modal-close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s ease;
+}
+
+.qibbs-modal-close:hover {
+    color: var(--qibbs-text, #0f172a);
+}
+
+.qibbs-vanity-modal-body {
+    padding: 24px;
+}
+
+.qibbs-modal-cuid-card {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.qibbs-modal-grade-tag {
+    display: inline-block;
+    background: rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+}
+
+.qibbs-modal-cuid-num {
+    font-size: 32px;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.qibbs-modal-cuid-hint {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.qibbs-modal-cost-breakdown,
+.qibbs-recycle-quote-box {
+    background: var(--qibbs-bg, #f8fafc);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.qibbs-cost-row,
+.qibbs-recycle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--qibbs-text-secondary, #64748b);
+}
+
+.qibbs-cost-row strong,
+.qibbs-recycle-row strong {
+    color: var(--qibbs-text, #0f172a);
+}
+
+.qibbs-cost-row.qibbs-cost-after {
+    padding-top: 8px;
+    border-top: 1px dashed var(--qibbs-border, #e2e8f0);
+    font-weight: 600;
+}
+
+.qibbs-recycle-row.qibbs-recycle-total {
+    padding-top: 8px;
+    border-top: 1px dashed var(--qibbs-border, #e2e8f0);
+}
+
+.qibbs-recycle-amount {
+    font-size: 18px;
+    color: #10b981;
+}
+
+.qibbs-modal-alert {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: 12px;
+}
+
+.qibbs-alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.qibbs-alert-warning {
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    color: #b45309;
+}
+
+.qibbs-form-group {
+    margin-bottom: 16px;
+}
+
+.qibbs-form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--qibbs-text, #0f172a);
+    margin-bottom: 6px;
+}
+
+.qibbs-form-group input {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 14px;
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: 8px;
+    background: var(--qibbs-bg, #f8fafc);
+    color: var(--qibbs-text, #0f172a);
+    box-sizing: border-box;
+}
+
+.qibbs-form-group input:focus {
+    outline: none;
+    border-color: var(--qibbs-primary, #6366f1);
+    background: #ffffff;
+}
+
+.qibbs-list-fee-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.qibbs-vanity-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    background: var(--qibbs-bg, #f8fafc);
+    border-top: 1px solid var(--qibbs-border, #e2e8f0);
+}
+
+/* 按钮及弹窗主色系高对比度统一 */
+.qibbs-vanity-mall-container .qibbs-btn,
+.qibbs-vanity-modal .qibbs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-primary,
+.qibbs-vanity-modal .qibbs-btn-primary {
+    background: var(--qibbs-gradient-primary, var(--qibbs-primary)) !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 14px -2px var(--qibbs-primary-glow, rgba(99, 102, 241, 0.35)) !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-primary:hover:not(:disabled),
+.qibbs-vanity-modal .qibbs-btn-primary:hover:not(:disabled) {
+    background: var(--qibbs-primary-hover) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px -2px var(--qibbs-primary-glow, rgba(99, 102, 241, 0.45)) !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-primary *,
+.qibbs-vanity-modal .qibbs-btn-primary * {
+    color: #ffffff !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-success,
+.qibbs-vanity-modal .qibbs-btn-success {
+    background: #10b981 !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.3);
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-success:hover:not(:disabled),
+.qibbs-vanity-modal .qibbs-btn-success:hover:not(:disabled) {
+    background: #059669 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-success *,
+.qibbs-vanity-modal .qibbs-btn-success * {
+    color: #ffffff !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-danger,
+.qibbs-vanity-modal .qibbs-btn-danger {
+    background: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+    box-shadow: 0 4px 12px -2px rgba(239, 68, 68, 0.3);
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-danger:hover:not(:disabled),
+.qibbs-vanity-modal .qibbs-btn-danger:hover:not(:disabled) {
+    background: #dc2626 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-danger *,
+.qibbs-vanity-modal .qibbs-btn-danger * {
+    color: #ffffff !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-warning,
+.qibbs-vanity-modal .qibbs-btn-warning {
+    background: #f59e0b !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-warning:hover:not(:disabled),
+.qibbs-vanity-modal .qibbs-btn-warning:hover:not(:disabled) {
+    background: #d97706 !important;
+    color: #ffffff !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-warning *,
+.qibbs-vanity-modal .qibbs-btn-warning * {
+    color: #ffffff !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-default,
+.qibbs-vanity-modal .qibbs-btn-default {
+    background: var(--qibbs-bg-card, #ffffff) !important;
+    color: var(--qibbs-text, #334155) !important;
+    border: 1px solid var(--qibbs-border, #cbd5e1) !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn-default:hover:not(:disabled),
+.qibbs-vanity-modal .qibbs-btn-default:hover:not(:disabled) {
+    background: var(--qibbs-bg-hover, #f1f5f9) !important;
+    color: var(--qibbs-text, #0f172a) !important;
+    border-color: #94a3b8 !important;
+}
+
+.qibbs-vanity-mall-container .qibbs-btn:disabled,
+.qibbs-vanity-modal .qibbs-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ==================== 8. 全局 Toast 提示 ==================== */
+.qibbs-vanity-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    z-index: 100000;
+    display: none;
+    pointer-events: none;
+}
+
+.qibbs-vanity-toast.is-success {
+    background: rgba(16, 185, 129, 0.94);
+}
+.qibbs-vanity-toast.is-error {
+    background: rgba(239, 68, 68, 0.94);
+}
+.qibbs-vanity-toast.is-warning {
+    background: rgba(245, 158, 11, 0.94);
+}
+
+/* ==================== 8.5 靓号成交动态与交易记录卡片 ==================== */
+.qibbs-records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.qibbs-record-card {
+    background: var(--qibbs-bg-card, #ffffff);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+    border-radius: var(--qibbs-radius-md, 12px);
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.qibbs-record-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+.qibbs-record-card.type-official {
+    border-left: 4px solid #6366f1;
+}
+
+.qibbs-record-card.type-c2c {
+    border-left: 4px solid var(--qibbs-primary, #10b981);
+}
+
+.qibbs-record-card.type-recycle {
+    border-left: 4px solid #f59e0b;
+}
+
+.qibbs-record-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.qibbs-record-cuid-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.qibbs-record-cuid-number {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: var(--qibbs-text, #0f172a);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.qibbs-record-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.qibbs-record-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.qibbs-record-badge.type-official {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.qibbs-record-badge.type-c2c {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.qibbs-record-badge.type-recycle {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.qibbs-record-time {
+    font-size: 13px;
+    color: var(--qibbs-text-secondary, #94a3b8);
+}
+
+.qibbs-record-parties {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    background: var(--qibbs-bg, #f8fafc);
+    border-radius: 10px;
+    border: 1px solid var(--qibbs-border, #f1f5f9);
+}
+
+.qibbs-record-party {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.qibbs-record-party.buyer {
+    justify-content: flex-start;
+}
+
+.qibbs-record-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.qibbs-record-avatar-placeholder {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.qibbs-record-party-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.qibbs-party-role {
+    font-size: 11px;
+    color: var(--qibbs-text-secondary, #94a3b8);
+    line-height: 1.2;
+}
+
+.qibbs-party-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--qibbs-text, #334155);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qibbs-record-user-cuid {
+    font-size: 11px;
+    color: var(--qibbs-primary, #10b981);
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.qibbs-record-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--qibbs-primary, #10b981);
+    flex-shrink: 0;
+    background: #ffffff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--qibbs-border, #e2e8f0);
+}
+
+.qibbs-record-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 4px;
+}
+
+.qibbs-record-sn {
+    font-size: 12px;
+    color: var(--qibbs-text-secondary, #94a3b8);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.qibbs-record-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-weight: 700;
+}
+
+.qibbs-record-price.is-cash {
+    color: #ef4444;
+}
+
+.qibbs-record-price.is-cash .qibbs-record-price-sym {
+    font-size: 14px;
+}
+
+.qibbs-record-price.is-cash .qibbs-record-price-val {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.qibbs-record-price.is-points {
+    color: #f59e0b;
+}
+
+.qibbs-record-price.is-points .qibbs-record-price-val {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.qibbs-record-price.is-points .qibbs-record-price-unit {
+    font-size: 13px;
+    color: #b45309;
+}
+
+/* ==================== 9. 移动端自适应优化 ==================== */
+@media (max-width: 768px) {
+    .qibbs-vanity-hero {
+        padding: 18px 16px;
+    }
+    .qibbs-vanity-hero-title {
+        font-size: 20px;
+    }
+    .qibbs-vanity-user-summary {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .qibbs-vanity-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .qibbs-vanity-card {
+        padding: 12px;
+    }
+    .qibbs-vanity-card-num,
+    .qibbs-bp-cuid-num {
+        font-size: 20px;
+    }
+    .qibbs-search-control input {
+        width: 100%;
+    }
+    .qibbs-search-control input:focus {
+        width: 100%;
+    }
+    .qibbs-backpack-grid {
+        grid-template-columns: 1fr;
+    }
+    .qibbs-record-parties {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    .qibbs-record-arrow {
+        transform: rotate(90deg);
+        margin: -4px auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .qibbs-vanity-grid {
+        grid-template-columns: 1fr;
+    }
+    .qibbs-c2c-type-filter {
+        width: 100%;
+        overflow-x: auto;
+    }
+}
+
+/* ==================== 10. 4 套内置风格在交易大厅的专属设计 ==================== */
+
+/* 1. 默认风格（典雅紫蓝 / Indigo Modern） */
+[data-qibbs-theme="default"] .qibbs-vanity-hero,
+:root:not([data-qibbs-theme]) .qibbs-vanity-hero {
+    background: linear-gradient(135deg, #18182f 0%, #2e1b4d 55%, #1e1b4b 100%) !important;
+}
+[data-qibbs-theme="default"] .qibbs-vanity-hero::before,
+:root:not([data-qibbs-theme]) .qibbs-vanity-hero::before {
+    background: radial-gradient(circle, #6366f1 0%, transparent 70%) !important;
+}
+[data-qibbs-theme="default"] .qibbs-vanity-tab.active,
+:root:not([data-qibbs-theme]) .qibbs-vanity-tab.active {
+    color: #6366f1 !important;
+    border-bottom-color: #6366f1 !important;
+}
+[data-qibbs-theme="default"] .qibbs-vanity-tab.active .qibbs-tab-badge,
+:root:not([data-qibbs-theme]) .qibbs-vanity-tab.active .qibbs-tab-badge {
+    background: #eef2ff !important;
+    color: #6366f1 !important;
+}
+[data-qibbs-theme="default"] .qibbs-grade-pill.active,
+:root:not([data-qibbs-theme]) .qibbs-grade-pill.active {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35) !important;
+}
+[data-qibbs-theme="default"] .qibbs-search-control input:focus,
+:root:not([data-qibbs-theme]) .qibbs-search-control input:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18) !important;
+}
+[data-qibbs-theme="default"] .qibbs-vanity-card:hover,
+:root:not([data-qibbs-theme]) .qibbs-vanity-card:hover {
+    border-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 12px 24px -4px rgba(99, 102, 241, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+}
+[data-qibbs-theme="default"] .qibbs-btn-primary,
+:root:not([data-qibbs-theme]) .qibbs-btn-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    box-shadow: 0 4px 14px -2px rgba(99, 102, 241, 0.38) !important;
+}
+[data-qibbs-theme="default"] .qibbs-btn-primary:hover:not(:disabled),
+:root:not([data-qibbs-theme]) .qibbs-btn-primary:hover:not(:disabled) {
+    background: #4338ca !important;
+}
+
+/* 2. 小清新风格（翡翠薄荷 / Emerald & Mint） */
+[data-qibbs-theme="fresh"] .qibbs-vanity-hero {
+    background: linear-gradient(135deg, #02261e 0%, #064e3b 55%, #043f31 100%) !important;
+}
+[data-qibbs-theme="fresh"] .qibbs-vanity-hero::before {
+    background: radial-gradient(circle, #10b981 0%, transparent 70%) !important;
+}
+[data-qibbs-theme="fresh"] .qibbs-vanity-tab.active {
+    color: #10b981 !important;
+    border-bottom-color: #10b981 !important;
+}
+[data-qibbs-theme="fresh"] .qibbs-vanity-tab.active .qibbs-tab-badge {
+    background: #ecfdf5 !important;
+    color: #10b981 !important;
+}
+[data-qibbs-theme="fresh"] .qibbs-grade-pill.active {
+    background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%) !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35) !important;
+}
+[data-qibbs-theme="fresh"] .qibbs-type-filter-btn.active {
+    background: #10b981 !important;
+}
+[data-qibbs-theme="fresh"] .qibbs-search-control input:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18) !important;
+}
+[data-qibbs-theme="fresh"] .qibbs-vanity-card:hover {
+    border-color: rgba(16, 185, 129, 0.45);
+    box-shadow: 0 12px 24px -4px rgba(16, 185, 129, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+}
+[data-qibbs-theme="fresh"] .qibbs-btn-primary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.38) !important;
+}
+[data-qibbs-theme="fresh"] .qibbs-btn-primary:hover:not(:disabled) {
+    background: #047857 !important;
+}
+
+/* 3. 科技风格（极光电光蓝 / Cyber Sky & Blue） */
+[data-qibbs-theme="tech"] .qibbs-vanity-hero {
+    background: linear-gradient(135deg, #041f33 0%, #082f49 55%, #073b5c 100%) !important;
+}
+[data-qibbs-theme="tech"] .qibbs-vanity-hero::before {
+    background: radial-gradient(circle, #0ea5e9 0%, transparent 70%) !important;
+}
+[data-qibbs-theme="tech"] .qibbs-vanity-tab.active {
+    color: #0ea5e9 !important;
+    border-bottom-color: #0ea5e9 !important;
+}
+[data-qibbs-theme="tech"] .qibbs-vanity-tab.active .qibbs-tab-badge {
+    background: #f0f9ff !important;
+    color: #0ea5e9 !important;
+}
+[data-qibbs-theme="tech"] .qibbs-grade-pill.active {
+    background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%) !important;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.35) !important;
+}
+[data-qibbs-theme="tech"] .qibbs-type-filter-btn.active {
+    background: #0ea5e9 !important;
+}
+[data-qibbs-theme="tech"] .qibbs-search-control input:focus {
+    border-color: #0ea5e9 !important;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18) !important;
+}
+[data-qibbs-theme="tech"] .qibbs-vanity-card:hover {
+    border-color: rgba(14, 165, 233, 0.45);
+    box-shadow: 0 12px 24px -4px rgba(14, 165, 233, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+}
+[data-qibbs-theme="tech"] .qibbs-btn-primary {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+    box-shadow: 0 4px 14px -2px rgba(14, 165, 233, 0.38) !important;
+}
+[data-qibbs-theme="tech"] .qibbs-btn-primary:hover:not(:disabled) {
+    background: #0369a1 !important;
+}
+
+/* 4. 游戏风格（赛博朋克电竞烈焰玫瑰 / Cyberpunk Crimson & Neon Rose） */
+[data-qibbs-theme="gaming"] .qibbs-vanity-hero {
+    background: linear-gradient(135deg, #2b061e 0%, #4c0519 55%, #3b0764 100%) !important;
+}
+[data-qibbs-theme="gaming"] .qibbs-vanity-hero::before {
+    background: radial-gradient(circle, #f43f5e 0%, transparent 70%) !important;
+}
+[data-qibbs-theme="gaming"] .qibbs-vanity-tab.active {
+    color: #f43f5e !important;
+    border-bottom-color: #f43f5e !important;
+}
+[data-qibbs-theme="gaming"] .qibbs-vanity-tab.active .qibbs-tab-badge {
+    background: #fff1f2 !important;
+    color: #f43f5e !important;
+}
+[data-qibbs-theme="gaming"] .qibbs-grade-pill.active {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%) !important;
+    box-shadow: 0 2px 8px rgba(244, 63, 94, 0.35) !important;
+}
+[data-qibbs-theme="gaming"] .qibbs-type-filter-btn.active {
+    background: #f43f5e !important;
+}
+[data-qibbs-theme="gaming"] .qibbs-search-control input:focus {
+    border-color: #f43f5e !important;
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.18) !important;
+}
+[data-qibbs-theme="gaming"] .qibbs-vanity-card:hover {
+    border-color: rgba(244, 63, 94, 0.45);
+    box-shadow: 0 12px 24px -4px rgba(244, 63, 94, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+}
+[data-qibbs-theme="gaming"] .qibbs-btn-primary {
+    background: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%) !important;
+    box-shadow: 0 4px 14px -2px rgba(244, 63, 94, 0.38) !important;
+}
+[data-qibbs-theme="gaming"] .qibbs-btn-primary:hover:not(:disabled) {
+    background: #be123c !important;
+}
+
+/* ==================== 11. 交易大厅全套暗黑模式适配 ==================== */
+html.dark-mode .qibbs-vanity-toolbar,
+body.qibbs-dark-mode .qibbs-vanity-toolbar,
+html[data-theme="dark"] .qibbs-vanity-toolbar,
+html.dark-mode .qibbs-vanity-card,
+body.qibbs-dark-mode .qibbs-vanity-card,
+html[data-theme="dark"] .qibbs-vanity-card,
+html.dark-mode .qibbs-backpack-header,
+body.qibbs-dark-mode .qibbs-backpack-header,
+html[data-theme="dark"] .qibbs-backpack-header {
+    background: var(--qibbs-bg-card, #1e293b);
+    border-color: var(--qibbs-border, rgba(255, 255, 255, 0.08));
+    box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.35);
+}
+
+html.dark-mode .qibbs-vanity-card-num,
+body.qibbs-dark-mode .qibbs-vanity-card-num,
+html[data-theme="dark"] .qibbs-vanity-card-num,
+html.dark-mode .qibbs-bp-cuid-num,
+body.qibbs-dark-mode .qibbs-bp-cuid-num,
+html[data-theme="dark"] .qibbs-bp-cuid-num {
+    color: #f8fafc;
+}
+
+html.dark-mode .qibbs-vanity-tab,
+body.qibbs-dark-mode .qibbs-vanity-tab,
+html[data-theme="dark"] .qibbs-vanity-tab {
+    color: #94a3b8;
+}
+
+html.dark-mode .qibbs-vanity-tab .qibbs-tab-badge,
+body.qibbs-dark-mode .qibbs-vanity-tab .qibbs-tab-badge,
+html[data-theme="dark"] .qibbs-vanity-tab .qibbs-tab-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+}
+
+html.dark-mode .qibbs-search-control input,
+body.qibbs-dark-mode .qibbs-search-control input,
+html[data-theme="dark"] .qibbs-search-control input,
+html.dark-mode .qibbs-sort-control select,
+body.qibbs-dark-mode .qibbs-sort-control select,
+html[data-theme="dark"] .qibbs-sort-control select,
+html.dark-mode .qibbs-currency-control select,
+body.qibbs-dark-mode .qibbs-currency-control select,
+html[data-theme="dark"] .qibbs-currency-control select {
+    background: rgba(15, 23, 42, 0.85);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #f8fafc;
+}
+
+html.dark-mode .qibbs-grade-pill,
+body.qibbs-dark-mode .qibbs-grade-pill,
+html[data-theme="dark"] .qibbs-grade-pill {
+    background: rgba(15, 23, 42, 0.7);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+html.dark-mode .qibbs-grade-pill:hover,
+body.qibbs-dark-mode .qibbs-grade-pill:hover,
+html[data-theme="dark"] .qibbs-grade-pill:hover {
+    background: rgba(51, 65, 85, 0.7);
+    color: #ffffff;
+}
+
+html.dark-mode .qibbs-c2c-seller-info,
+body.qibbs-dark-mode .qibbs-c2c-seller-info,
+html[data-theme="dark"] .qibbs-c2c-seller-info {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark-mode .qibbs-seller-name,
+body.qibbs-dark-mode .qibbs-seller-name,
+html[data-theme="dark"] .qibbs-seller-name {
+    color: #e2e8f0;
+}
+
+html.dark-mode .qibbs-vanity-modal-content,
+body.qibbs-dark-mode .qibbs-vanity-modal-content,
+html[data-theme="dark"] .qibbs-vanity-modal-content {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #f8fafc;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+}
+
+html.dark-mode .qibbs-vanity-modal-header,
+body.qibbs-dark-mode .qibbs-vanity-modal-header,
+html[data-theme="dark"] .qibbs-vanity-modal-header {
+    background: #1e293b;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark-mode .qibbs-vanity-modal-title,
+body.qibbs-dark-mode .qibbs-vanity-modal-title,
+html[data-theme="dark"] .qibbs-vanity-modal-title {
+    color: #f8fafc;
+}
+
+html.dark-mode .qibbs-vanity-modal-footer,
+body.qibbs-dark-mode .qibbs-vanity-modal-footer,
+html[data-theme="dark"] .qibbs-vanity-modal-footer {
+    background: #1e293b;
+    border-top-color: rgba(255, 255, 255, 0.08);
+}

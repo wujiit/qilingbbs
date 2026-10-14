@@ -1,0 +1,267 @@
+/**
+ * 工单后台管理样式
+ */
+
+/* 列表分类徽章 */
+.qibbs-category-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #f0f0f1;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+/* 后台面板与元数据框样式 */
+.qibbs-tickets-admin .postbox-header h2 {
+    padding: 12px 16px;
+}
+
+.qibbs-tickets-admin .inside {
+    padding: 16px;
+}
+
+body.qibbs-admin-shell .qibbs-admin-page.qibbs-tickets-admin {
+    max-width: none;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-filters {
+    padding: 12px;
+    border: 1px solid var(--qibbs-admin-border);
+    border-radius: 8px;
+    background: #fff;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-filters form,
+body.qibbs-admin-shell .qibbs-tickets-admin .tablenav .actions {
+    gap: 10px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-filters select,
+body.qibbs-admin-shell .qibbs-tickets-admin .tablenav .actions select {
+    min-width: 150px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-filters input[type="search"] {
+    flex: 1 1 260px;
+    min-width: 260px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-admin-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--qibbs-admin-border);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-admin-table-scroll .wp-list-table {
+    min-width: 1480px;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    table-layout: fixed;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-list-table th,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-list-table td {
+    vertical-align: middle;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-list-table .check-column {
+    width: 44px;
+    padding-right: 8px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-id {
+    width: 60px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-title,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-title-cell {
+    width: 300px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-title-cell a {
+    display: inline-block;
+    max-width: 100%;
+    line-height: 1.55;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-category {
+    width: 110px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-priority {
+    width: 90px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-user,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-assignee {
+    width: 130px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-status {
+    width: 110px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-sla {
+    width: 140px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-publish {
+    width: 110px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-created {
+    width: 160px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-actions {
+    width: 100px;
+}
+
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-id,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-category,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-priority,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-user,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-assignee,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-status,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-sla,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-publish,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-created,
+body.qibbs-admin-shell .qibbs-tickets-admin .qibbs-ticket-col-actions {
+    white-space: nowrap;
+}
+
+/* 后台工单状态徽章 */
+.qibbs-admin-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #fff;
+}
+
+.qibbs-admin-status-pending {
+    background: #f0ad4e;
+    color: #fff;
+}
+
+.qibbs-admin-status-processing {
+    background: #5bc0de;
+    color: #fff;
+}
+
+.qibbs-admin-status-pending-customer {
+    background: #6f42c1;
+    color: #fff;
+}
+
+.qibbs-admin-status-reopened {
+    background: #fd7e14;
+    color: #fff;
+}
+
+.qibbs-admin-status-resolved {
+    background: #5cb85c;
+    color: #fff;
+}
+
+.qibbs-admin-status-closed {
+    background: #999;
+    color: #fff;
+}
+
+.qibbs-admin-status-default {
+    background: #666;
+    color: #fff;
+}
+
+/* 工单回复流与详情样式 */
+.qibbs-admin-reply {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.qibbs-admin-reply-user {
+    background: #f9f9f9;
+}
+
+.qibbs-admin-reply-admin {
+    background: #e7f3ff;
+    border-left: 3px solid #2271b1;
+}
+
+.qibbs-admin-reply-internal {
+    background: #fff3cd;
+    border-left: 3px solid #f0ad4e;
+}
+
+/* 分类编辑表单 */
+#qibbs-category-form .widefat {
+    margin-top: 5px;
+}
+
+.qibbs-sla-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.qibbs-sla-badge.is-ok {
+    background: #e7f8ee;
+    color: #0a6b2a;
+}
+
+.qibbs-sla-badge.is-danger {
+    background: #fdecea;
+    color: #b42318;
+}
+
+.qibbs-ticket-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.qibbs-ticket-overview-card {
+    background: #fff;
+    border: 1px solid #d8deea;
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+.qibbs-ticket-overview-card.is-danger {
+    border-color: #f7c8c4;
+    background: #fff8f7;
+}
+
+.qibbs-ticket-overview-label {
+    color: #566174;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.qibbs-ticket-overview-value {
+    color: #111827;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-top: 6px;
+}
+
+@media (max-width: 1200px) {
+    .qibbs-ticket-overview-grid {
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+    }
+}

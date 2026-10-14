@@ -1,0 +1,861 @@
+/* Qibbs Voting Integration Styles - 紧凑美化版本 */
+
+/* =========================================
+   CSS Variables for Voting
+   ========================================= */
+:root {
+    --qivot-gradient-start: #667eea;
+    --qivot-gradient-end: #764ba2;
+    --qivot-success: #10b981;
+    --qivot-warning: #f59e0b;
+    --qivot-info: #3b82f6;
+}
+
+[data-theme="dark"] {
+    --qivot-gradient-start: #818cf8;
+    --qivot-gradient-end: #a78bfa;
+}
+
+/* =========================================
+   Poll Badge in Feed Card
+   ========================================= */
+.qibbs-poll-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+[data-theme="dark"] .qibbs-poll-badge {
+    color: #a5b4fc;
+    background: rgba(129, 140, 248, 0.15);
+}
+
+/* =========================================
+   Vote Button in Composer
+   ========================================= */
+.qibbs-tool-btn.qibbs-vote-btn {
+    cursor: pointer;
+    margin-right: 8px;
+    color: var(--qibbs-text-secondary);
+    transition: all 0.2s ease;
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+
+.qibbs-tool-btn.qibbs-vote-btn:hover {
+    color: var(--qivot-gradient-start);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.qibbs-tool-btn.qibbs-vote-btn.active {
+    color: var(--qivot-gradient-start);
+    background: rgba(102, 126, 234, 0.12);
+}
+
+/* =========================================
+   Poll Placeholder - 折叠触发器
+   ========================================= */
+.qivot-poll-placeholder {
+    margin-top: 10px;
+    min-height: 0;
+}
+
+/* 折叠状态的触发按钮 - 简洁单行 */
+.qivot-poll-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+}
+
+.qivot-poll-toggle:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+    border-color: rgba(102, 126, 234, 0.35);
+}
+
+[data-theme="dark"] .qivot-poll-toggle {
+    background: rgba(129, 140, 248, 0.1);
+    border-color: rgba(129, 140, 248, 0.25);
+}
+
+[data-theme="dark"] .qivot-poll-toggle:hover {
+    background: rgba(129, 140, 248, 0.18);
+    border-color: rgba(129, 140, 248, 0.4);
+}
+
+.qivot-poll-toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, var(--qivot-gradient-start), var(--qivot-gradient-end));
+    border-radius: 5px;
+    flex-shrink: 0;
+}
+
+.qivot-poll-toggle-icon svg {
+    fill: white;
+}
+
+.qivot-poll-toggle-text {
+    font-weight: 600;
+    color: var(--qivot-gradient-start);
+}
+
+[data-theme="dark"] .qivot-poll-toggle-text {
+    color: #a5b4fc;
+}
+
+.qivot-poll-toggle-arrow {
+    color: var(--qivot-gradient-start);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .qivot-poll-toggle-arrow {
+    color: #a5b4fc;
+}
+
+.qivot-poll-toggle.expanded .qivot-poll-toggle-arrow {
+    transform: rotate(180deg);
+}
+
+/* =========================================
+   Poll Container - 紧凑版主容器
+   ========================================= */
+.qivot-poll-wrapper {
+    display: none;
+    margin-top: 8px;
+    animation: slideDown 0.25s ease;
+}
+
+.qivot-poll-wrapper.show {
+    display: block;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.qivot-poll {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.12);
+    border-radius: 10px;
+    padding: 10px 12px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.qivot-poll::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--qivot-gradient-start), var(--qivot-gradient-end));
+    border-radius: 10px 10px 0 0;
+}
+
+[data-theme="dark"] .qivot-poll {
+    background: rgba(129, 140, 248, 0.06);
+    border-color: rgba(129, 140, 248, 0.15);
+}
+
+/* =========================================
+   Poll Header - 紧凑标题
+   ========================================= */
+.qivot-poll-header {
+    margin-bottom: 8px;
+}
+
+.qivot-poll-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 2px 0 !important;
+    line-height: 1.3;
+    color: var(--qibbs-text, #1f2937);
+    background: linear-gradient(135deg, var(--qivot-gradient-start), var(--qivot-gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+[data-theme="dark"] .qivot-poll-title {
+    background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.qivot-poll-description {
+    font-size: 12px;
+    color: var(--qibbs-text-secondary, #6b7280);
+    margin: 0 0 6px 0 !important;
+    line-height: 1.4;
+}
+
+[data-theme="dark"] .qivot-poll-description {
+    color: #9ca3af;
+}
+
+.qivot-poll-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--qibbs-text-light, #9ca3af);
+    align-items: center;
+    margin-bottom: 2px;
+}
+
+.qivot-poll-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(102, 126, 234, 0.08);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+    color: var(--qivot-gradient-start);
+}
+
+[data-theme="dark"] .qivot-poll-meta span {
+    background: rgba(129, 140, 248, 0.12);
+    color: #a5b4fc;
+}
+
+.qivot-poll-time {
+    font-size: 10px;
+    color: #9ca3af;
+    margin-top: 2px;
+    display: flex;
+    gap: 8px;
+}
+
+[data-theme="dark"] .qivot-poll-time {
+    color: #6b7280;
+}
+
+/* =========================================
+   Poll Options - 紧凑选项
+   ========================================= */
+.qivot-poll-options {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.qivot-option {
+    position: relative;
+}
+
+.qivot-option-label {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    background: var(--qibbs-bg, #ffffff);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    min-height: 36px;
+}
+
+[data-theme="dark"] .qivot-option-label {
+    background: rgba(31, 41, 55, 0.5);
+}
+
+.qivot-option-label:hover {
+    border-color: rgba(102, 126, 234, 0.35);
+    transform: translateX(2px);
+}
+
+[data-theme="dark"] .qivot-option-label:hover {
+    border-color: rgba(129, 140, 248, 0.4);
+}
+
+.qivot-option-input {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--qivot-gradient-start);
+    cursor: pointer;
+}
+
+.qivot-option-text {
+    font-size: 13px;
+    color: var(--qibbs-text, #374151);
+    font-weight: 500;
+    flex: 1;
+}
+
+[data-theme="dark"] .qivot-option-text {
+    color: #e5e7eb;
+}
+
+.qivot-option-input:checked+.qivot-option-text {
+    color: var(--qivot-gradient-start);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .qivot-option-input:checked+.qivot-option-text {
+    color: #a5b4fc;
+}
+
+/* =========================================
+   Option Results - 紧凑结果
+   ========================================= */
+.qivot-option-result {
+    background: var(--qibbs-bg, #ffffff);
+    border: 1px solid rgba(102, 126, 234, 0.08);
+    border-radius: 8px;
+    padding: 8px 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .qivot-option-result {
+    background: rgba(31, 41, 55, 0.4);
+    border-color: rgba(129, 140, 248, 0.1);
+}
+
+.qivot-option-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 2;
+}
+
+.qivot-option-info .qivot-option-text {
+    font-size: 12px;
+}
+
+.qivot-option-stats {
+    font-size: 12px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--qivot-gradient-start), var(--qivot-gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.qivot-option-bar {
+    height: 4px;
+    background: rgba(102, 126, 234, 0.08);
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .qivot-option-bar {
+    background: rgba(129, 140, 248, 0.12);
+}
+
+.qivot-option-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--qivot-gradient-start), var(--qivot-gradient-end));
+    border-radius: 100px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0;
+}
+
+/* =========================================
+   Submit Button - 紧凑按钮
+   ========================================= */
+.qivot-poll-actions {
+    margin-top: 8px;
+    text-align: right;
+}
+
+.qivot-submit-btn {
+    background: linear-gradient(135deg, var(--qivot-gradient-start) 0%, var(--qivot-gradient-end) 100%);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    transition: all 0.2s ease;
+}
+
+.qivot-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.qivot-submit-btn:active {
+    transform: translateY(0);
+}
+
+.qivot-submit-btn:disabled {
+    background: linear-gradient(135deg, #9ca3af, #6b7280);
+    color: #e5e7eb;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+[data-theme="dark"] .qivot-submit-btn {
+    box-shadow: 0 2px 8px rgba(129, 140, 248, 0.25);
+}
+
+/* =========================================
+   Messages - 紧凑消息
+   ========================================= */
+.qivot-poll-message {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.qivot-message-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--qivot-success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.qivot-message-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--qivot-info);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .qivot-message-success {
+    background: rgba(16, 185, 129, 0.12);
+}
+
+[data-theme="dark"] .qivot-message-info {
+    background: rgba(59, 130, 246, 0.12);
+}
+
+/* =========================================
+   Loading State
+   ========================================= */
+.qivot-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    color: var(--qibbs-text-secondary, #6b7280);
+    font-size: 13px;
+}
+
+.qivot-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-top-color: var(--qivot-gradient-start);
+    border-radius: 50%;
+    animation: qivot-spin 0.7s linear infinite;
+}
+
+[data-theme="dark"] .qivot-spinner {
+    border-color: rgba(129, 140, 248, 0.2);
+    border-top-color: #a5b4fc;
+}
+
+@keyframes qivot-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================
+   SVG Icons
+   ========================================= */
+.qivot-icon {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.qivot-icon-check {
+    color: var(--qivot-gradient-start);
+    margin-right: 3px;
+}
+
+[data-theme="dark"] .qivot-icon-check {
+    color: #a5b4fc;
+}
+
+/* =========================================
+   Modal Styles - 模态框
+   ========================================= */
+.qibbs-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s;
+}
+
+.qibbs-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.qibbs-modal {
+    background: var(--qibbs-bg, #fff);
+    width: 90%;
+    max-width: 480px;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(16px) scale(0.96);
+    transition: all 0.25s ease;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .qibbs-modal {
+    background: #1f2937;
+}
+
+.qibbs-modal-overlay.show .qibbs-modal {
+    transform: translateY(0) scale(1);
+}
+
+.qibbs-modal-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--qibbs-border, #e5e7eb);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.04), rgba(118, 75, 162, 0.04));
+}
+
+[data-theme="dark"] .qibbs-modal-header {
+    border-color: #374151;
+    background: rgba(129, 140, 248, 0.08);
+}
+
+.qibbs-modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, var(--qivot-gradient-start), var(--qivot-gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.qibbs-modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: 2px;
+    line-height: 1;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.qibbs-modal-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #6b7280;
+}
+
+[data-theme="dark"] .qibbs-modal-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #d1d5db;
+}
+
+.qibbs-modal-body {
+    padding: 18px;
+    max-height: 65vh;
+    overflow-y: auto;
+}
+
+.qibbs-modal-footer {
+    padding: 12px 18px;
+    border-top: 1px solid var(--qibbs-border, #e5e7eb);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .qibbs-modal-footer {
+    border-color: #374151;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* =========================================
+   Form Elements
+   ========================================= */
+.qibbs-form-group {
+    margin-bottom: 14px;
+}
+
+.qibbs-form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--qibbs-text, #374151);
+    font-size: 13px;
+}
+
+[data-theme="dark"] .qibbs-form-label {
+    color: #e5e7eb;
+}
+
+.qibbs-form-input,
+.qibbs-form-textarea,
+.qibbs-form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--qibbs-border, #e5e7eb);
+    border-radius: 8px;
+    font-size: 13px;
+    box-sizing: border-box;
+    background: var(--qibbs-bg, #fff);
+    color: var(--qibbs-text, #374151);
+    transition: all 0.2s;
+}
+
+[data-theme="dark"] .qibbs-form-input,
+[data-theme="dark"] .qibbs-form-textarea,
+[data-theme="dark"] .qibbs-form-select {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+.qibbs-form-input:focus,
+.qibbs-form-textarea:focus,
+.qibbs-form-select:focus {
+    outline: none;
+    border-color: var(--qivot-gradient-start);
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.12);
+}
+
+[data-theme="dark"] .qibbs-form-input:focus,
+[data-theme="dark"] .qibbs-form-textarea:focus,
+[data-theme="dark"] .qibbs-form-select:focus {
+    border-color: #818cf8;
+    box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.15);
+}
+
+.qibbs-poll-options-list {
+    margin-bottom: 10px;
+}
+
+.qibbs-poll-option-item {
+    display: flex;
+    margin-bottom: 8px;
+    gap: 8px;
+}
+
+.qibbs-poll-option-item input {
+    flex: 1;
+}
+
+.qibbs-poll-remove-option {
+    background: rgba(239, 68, 68, 0.1);
+    border: none;
+    color: #ef4444;
+    width: 36px;
+    cursor: pointer;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 16px;
+}
+
+.qibbs-poll-remove-option:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+[data-theme="dark"] .qibbs-poll-remove-option {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.qibbs-add-option-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(102, 126, 234, 0.06);
+    color: var(--qivot-gradient-start);
+    border: 1px dashed rgba(102, 126, 234, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.qibbs-add-option-btn:hover {
+    background: rgba(102, 126, 234, 0.12);
+    border-color: var(--qivot-gradient-start);
+}
+
+[data-theme="dark"] .qibbs-add-option-btn {
+    background: rgba(129, 140, 248, 0.08);
+    border-color: rgba(129, 140, 248, 0.25);
+    color: #a5b4fc;
+}
+
+/* =========================================
+   Buttons
+   ========================================= */
+.qibbs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.qibbs-btn-secondary {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.qibbs-btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+[data-theme="dark"] .qibbs-btn-secondary {
+    background: #374151;
+    color: #d1d5db;
+}
+
+[data-theme="dark"] .qibbs-btn-secondary:hover {
+    background: #4b5563;
+}
+
+.qibbs-btn-primary {
+    background: linear-gradient(135deg, var(--qivot-gradient-start), var(--qivot-gradient-end));
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.qibbs-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* =========================================
+   Poll Attachment Indicator
+   ========================================= */
+.qibbs-poll-attachment {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(102, 126, 234, 0.06);
+    border-radius: 8px;
+    border: 1px solid rgba(102, 126, 234, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+[data-theme="dark"] .qibbs-poll-attachment {
+    background: rgba(129, 140, 248, 0.08);
+    border-color: rgba(129, 140, 248, 0.2);
+}
+
+.qibbs-poll-attachment-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--qivot-gradient-start);
+}
+
+[data-theme="dark"] .qibbs-poll-attachment-info {
+    color: #a5b4fc;
+}
+
+.qibbs-poll-remove-btn {
+    border: none;
+    background: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 2px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.qibbs-poll-remove-btn:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
+@media (max-width: 600px) {
+    .qivot-poll {
+        padding: 8px 10px;
+    }
+
+    .qivot-poll-title {
+        font-size: 13px;
+    }
+
+    .qivot-option-label {
+        padding: 6px 8px;
+        min-height: 32px;
+    }
+
+    .qivot-submit-btn {
+        width: 100%;
+        padding: 8px;
+    }
+
+    .qibbs-modal {
+        width: 95%;
+        border-radius: 12px;
+    }
+
+    .qivot-poll-toggle {
+        padding: 8px 12px;
+    }
+}

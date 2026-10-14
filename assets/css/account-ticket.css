@@ -1,0 +1,844 @@
+/**
+ * 个人中心工单模块样式
+ * 兼容启灵主题个人中心设计规范
+ */
+
+/* ==========================================================================
+   CSS Variables - Inherit from qiling theme
+   ========================================================================== */
+
+:root {
+    --qibbs-acc-primary: var(--color-primary, #2563eb);
+    --qibbs-acc-primary-light: rgba(37, 99, 235, 0.1);
+    --qibbs-acc-success: #10b981;
+    --qibbs-acc-success-light: #d1fae5;
+    --qibbs-acc-warning: #f59e0b;
+    --qibbs-acc-warning-light: #fef3c7;
+    --qibbs-acc-danger: #ef4444;
+    --qibbs-acc-info: #3b82f6;
+    --qibbs-acc-info-light: #dbeafe;
+    --qibbs-acc-gray: #6b7280;
+    --qibbs-acc-gray-light: #f3f4f6;
+    --qibbs-acc-border: #e2e8f0;
+    --qibbs-acc-text: #1f2937;
+    --qibbs-acc-text-secondary: #6b7280;
+    --qibbs-acc-radius: 10px;
+    --qibbs-acc-transition: all 0.2s ease;
+}
+
+/* ==========================================================================
+   Account Tickets Container
+   ========================================================================== */
+
+.qibbs-account-tickets {
+    width: 100%;
+}
+
+/* ==========================================================================
+   Header with Actions
+   ========================================================================== */
+
+.qibbs-acc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.qibbs-acc-header .section-title {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.qibbs-acc-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--qibbs-acc-text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: var(--qibbs-acc-gray-light);
+    transition: var(--qibbs-acc-transition);
+}
+
+.qibbs-acc-back-link:hover {
+    background: var(--qibbs-acc-primary-light);
+    color: var(--qibbs-acc-primary);
+}
+
+/* ==========================================================================
+   Status Filters
+   ========================================================================== */
+
+.qibbs-acc-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--qibbs-acc-gray-light);
+    border-radius: var(--qibbs-acc-radius);
+}
+
+.qibbs-acc-filter-btn {
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--qibbs-acc-text-secondary);
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid var(--qibbs-acc-border);
+    transition: var(--qibbs-acc-transition);
+}
+
+.qibbs-acc-filter-btn:hover {
+    border-color: var(--qibbs-acc-primary);
+    color: var(--qibbs-acc-primary);
+}
+
+.qibbs-acc-filter-btn.active {
+    background: linear-gradient(135deg, var(--qibbs-acc-primary) 0%, #7c3aed 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+/* ==========================================================================
+   Ticket List
+   ========================================================================== */
+
+.qibbs-acc-ticket-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.qibbs-acc-ticket-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    background: #fff;
+    border-radius: var(--qibbs-acc-radius);
+    border: 1px solid var(--qibbs-acc-border);
+    transition: var(--qibbs-acc-transition);
+}
+
+.qibbs-acc-ticket-item:hover {
+    border-color: var(--qibbs-acc-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+}
+
+.qibbs-acc-ticket-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.qibbs-acc-ticket-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--qibbs-acc-text);
+    text-decoration: none;
+    margin-bottom: 8px;
+    transition: var(--qibbs-acc-transition);
+}
+
+.qibbs-acc-ticket-title:hover {
+    color: var(--qibbs-acc-primary);
+}
+
+.qibbs-acc-ticket-id {
+    color: var(--qibbs-acc-primary);
+    font-weight: 700;
+    font-size: 0.8rem;
+    background: var(--qibbs-acc-primary-light);
+    padding: 2px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.qibbs-acc-ticket-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: var(--qibbs-acc-text-secondary);
+    align-items: center;
+}
+
+.qibbs-acc-ticket-category {
+    background: var(--qibbs-acc-gray-light);
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.qibbs-acc-ticket-status {
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+/* ==========================================================================
+   Status Badges
+   ========================================================================== */
+
+.qibbs-acc-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.qibbs-acc-status-badge::before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: currentColor;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    flex-shrink: 0;
+}
+
+.qibbs-acc-status-pending {
+    background: var(--qibbs-acc-warning-light);
+    color: #92400e;
+}
+
+.qibbs-acc-status-pending::before {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zM12 11.5l-4-4V4h8v3.5l-4 4z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6zm10 14.5V20H8v-3.5l4-4 4 4zM12 11.5l-4-4V4h8v3.5l-4 4z'/%3E%3C/svg%3E");
+}
+
+.qibbs-acc-status-processing {
+    background: var(--qibbs-acc-info-light);
+    color: #1e40af;
+}
+
+.qibbs-acc-status-processing::before {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z'/%3E%3C/svg%3E");
+}
+
+.qibbs-acc-status-pending-customer {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+.qibbs-acc-status-pending-customer::before {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.1.8-1.2-4.5-2.7V7z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.1.8-1.2-4.5-2.7V7z'/%3E%3C/svg%3E");
+}
+
+.qibbs-acc-status-reopened {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.qibbs-acc-status-reopened::before {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z'/%3E%3C/svg%3E");
+}
+
+.qibbs-acc-status-resolved {
+    background: var(--qibbs-acc-success-light);
+    color: #065f46;
+}
+
+.qibbs-acc-status-resolved::before {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+}
+
+.qibbs-acc-status-closed {
+    background: var(--qibbs-acc-gray-light);
+    color: #475569;
+}
+
+.qibbs-acc-status-closed::before {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.qibbs-acc-empty {
+    text-align: center;
+    padding: 60px 30px;
+    background: var(--qibbs-acc-gray-light);
+    border-radius: var(--qibbs-acc-radius);
+    border: 2px dashed var(--qibbs-acc-border);
+}
+
+.qibbs-acc-empty-icon {
+    margin-bottom: 16px;
+    color: var(--qibbs-acc-border);
+}
+
+.qibbs-acc-empty p {
+    color: var(--qibbs-acc-text-secondary);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+/* ==========================================================================
+   Ticket Form
+   ========================================================================== */
+
+.qibbs-acc-ticket-form .form-group .required {
+    color: var(--qibbs-acc-danger);
+    margin-left: 2px;
+}
+
+.qibbs-acc-ticket-form .form-group .optional {
+    color: var(--qibbs-acc-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+/* 附件上传区域 */
+.qibbs-acc-upload-area {
+    border: 2px dashed var(--qibbs-acc-border);
+    border-radius: var(--qibbs-acc-radius);
+    padding: 24px;
+    text-align: center;
+    background: var(--qibbs-acc-gray-light);
+    transition: var(--qibbs-acc-transition);
+}
+
+.qibbs-acc-upload-area:hover {
+    border-color: var(--qibbs-acc-primary);
+}
+
+.qibbs-acc-media-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+    justify-content: center;
+}
+
+.qibbs-acc-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: 1px solid var(--qibbs-acc-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--qibbs-acc-text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--qibbs-acc-transition);
+}
+
+.qibbs-acc-upload-btn:hover {
+    border-color: var(--qibbs-acc-primary);
+    color: var(--qibbs-acc-primary);
+}
+
+.qibbs-acc-upload-hint {
+    font-size: 0.8rem;
+    color: var(--qibbs-acc-text-secondary);
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+/* Checkbox */
+.qibbs-acc-checkbox {
+    background: var(--qibbs-acc-gray-light);
+    padding: 18px;
+    border-radius: var(--qibbs-acc-radius);
+    border: 1px solid var(--qibbs-acc-border);
+}
+
+.qibbs-acc-checkbox label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.qibbs-acc-checkbox input[type="checkbox"] {
+    margin-top: 2px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--qibbs-acc-primary);
+}
+
+/* ==========================================================================
+   Ticket Detail
+   ========================================================================== */
+
+.qibbs-acc-ticket-info {
+    position: relative;
+}
+
+.qibbs-acc-ticket-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.qibbs-acc-ticket-subject {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--qibbs-acc-text);
+    margin: 0;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.qibbs-acc-ticket-detail-meta {
+    display: flex;
+    gap: 14px;
+    font-size: 0.85rem;
+    color: var(--qibbs-acc-text-secondary);
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.qibbs-acc-category-tag {
+    background: linear-gradient(135deg, var(--qibbs-acc-primary) 0%, #7c3aed 100%);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.qibbs-acc-ticket-content {
+    line-height: 1.8;
+    color: var(--qibbs-acc-text);
+    font-size: 0.95rem;
+    padding: 20px;
+    background: var(--qibbs-acc-gray-light);
+    border-radius: var(--qibbs-acc-radius);
+    border-left: 4px solid var(--qibbs-acc-primary);
+}
+
+/* Attachments */
+.qibbs-acc-attachments {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--qibbs-acc-border);
+}
+
+.qibbs-acc-attachments-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: var(--qibbs-acc-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.qibbs-acc-attachments-title::before {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V6H9v9.5a3.5 3.5 0 0 0 7 0V5c0-2.49-2.01-4.5-4.5-4.5S7 2.51 7 5v12.5c0 3.31 2.69 6 6 6s6-2.69 6-6V6h-2.5z'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V6H9v9.5a3.5 3.5 0 0 0 7 0V5c0-2.49-2.01-4.5-4.5-4.5S7 2.51 7 5v12.5c0 3.31 2.69 6 6 6s6-2.69 6-6V6h-2.5z'/%3E%3C/svg%3E") no-repeat center / contain;
+    flex-shrink: 0;
+}
+
+.qibbs-acc-attachments-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.qibbs-acc-attachment-item {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: var(--qibbs-acc-transition);
+}
+
+.qibbs-acc-attachment-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.qibbs-acc-attachment-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 工单已转帖子提示 */
+.qibbs-acc-published-notice {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: var(--qibbs-acc-success-light);
+    color: #065f46;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* 工单操作按钮区 */
+.qibbs-acc-ticket-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--qibbs-acc-border);
+}
+
+/* ==========================================================================
+   Replies / Conversation
+   ========================================================================== */
+
+.qibbs-acc-no-replies {
+    text-align: center;
+    padding: 40px 24px;
+    background: var(--qibbs-acc-gray-light);
+    border-radius: var(--qibbs-acc-radius);
+    color: var(--qibbs-acc-text-secondary);
+    border: 2px dashed var(--qibbs-acc-border);
+}
+
+.qibbs-acc-no-replies::before {
+    content: "";
+    display: block;
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 12px;
+    background-color: currentColor;
+    opacity: 0.4;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+.qibbs-acc-replies {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.qibbs-acc-reply {
+    display: flex;
+    gap: 14px;
+}
+
+.qibbs-acc-reply-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.qibbs-acc-reply-content {
+    flex: 1;
+    background: var(--qibbs-acc-gray-light);
+    padding: 16px 18px;
+    border-radius: var(--qibbs-acc-radius);
+    position: relative;
+}
+
+.qibbs-acc-reply-content::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 14px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid var(--qibbs-acc-gray-light);
+}
+
+.qibbs-acc-reply-admin .qibbs-acc-reply-content {
+    background: var(--qibbs-acc-info-light);
+    border-left: 3px solid var(--qibbs-acc-primary);
+}
+
+.qibbs-acc-reply-admin .qibbs-acc-reply-content::before {
+    border-right-color: var(--qibbs-acc-info-light);
+}
+
+.qibbs-acc-reply-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.qibbs-acc-reply-author {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--qibbs-acc-text);
+}
+
+.qibbs-acc-admin-badge {
+    background: linear-gradient(135deg, var(--qibbs-acc-primary) 0%, #7c3aed 100%);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-left: 8px;
+    text-transform: uppercase;
+}
+
+.qibbs-acc-reply-time {
+    font-size: 0.8rem;
+    color: var(--qibbs-acc-text-secondary);
+}
+
+.qibbs-acc-reply-body {
+    line-height: 1.6;
+    color: var(--qibbs-acc-text);
+    font-size: 0.9rem;
+}
+
+/* 工单回复表单 */
+.qibbs-acc-reply-form {
+    padding-top: 20px;
+    border-top: 1px solid var(--qibbs-acc-border);
+    margin-top: 8px;
+}
+
+/* 工单已关闭提示 */
+.qibbs-acc-closed-notice {
+    text-align: center;
+    padding: 20px;
+    background: var(--qibbs-acc-gray-light);
+    border-radius: var(--qibbs-acc-radius);
+    color: var(--qibbs-acc-text-secondary);
+    font-size: 0.9rem;
+}
+
+.qibbs-acc-closed-notice::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: -2px;
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor'%3E%3Cpath d='M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z'/%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn-sm {
+    padding: 10px 18px !important;
+    font-size: 0.85rem !important;
+}
+
+.btn-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--qibbs-acc-transition);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .qibbs-acc-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .qibbs-acc-ticket-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .qibbs-acc-ticket-status {
+        margin-left: 0;
+    }
+
+    .qibbs-acc-ticket-info-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .qibbs-acc-ticket-subject {
+        font-size: 1.1rem;
+    }
+
+    .qibbs-acc-filters {
+        padding: 12px;
+    }
+
+    .qibbs-acc-filter-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .qibbs-acc-reply {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .qibbs-acc-reply-content::before {
+        display: none;
+    }
+
+    .qibbs-acc-attachment-item {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .qibbs-acc-ticket-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .qibbs-acc-reply-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .qibbs-acc-upload-area {
+        padding: 18px;
+    }
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+
+html.dark-mode .qibbs-account-tickets,
+.dark-mode .qibbs-account-tickets {
+    --qibbs-acc-gray-light: rgba(255, 255, 255, 0.05);
+    --qibbs-acc-border: rgba(255, 255, 255, 0.1);
+    --qibbs-acc-text: #e2e8f0;
+    --qibbs-acc-text-secondary: #94a3b8;
+}
+
+html.dark-mode .qibbs-acc-ticket-item,
+.dark-mode .qibbs-acc-ticket-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark-mode .qibbs-acc-ticket-item:hover,
+.dark-mode .qibbs-acc-ticket-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+html.dark-mode .qibbs-acc-filter-btn,
+.dark-mode .qibbs-acc-filter-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--qibbs-acc-text-secondary);
+}
+
+html.dark-mode .qibbs-acc-filter-btn:hover,
+.dark-mode .qibbs-acc-filter-btn:hover {
+    background: rgba(37, 99, 235, 0.2);
+}
+
+html.dark-mode .qibbs-acc-upload-btn,
+.dark-mode .qibbs-acc-upload-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+html.dark-mode .qibbs-acc-reply-content,
+.dark-mode .qibbs-acc-reply-content {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+html.dark-mode .qibbs-acc-reply-content::before,
+.dark-mode .qibbs-acc-reply-content::before {
+    border-right-color: rgba(255, 255, 255, 0.05);
+}
+
+html.dark-mode .qibbs-acc-reply-admin .qibbs-acc-reply-content,
+.dark-mode .qibbs-acc-reply-admin .qibbs-acc-reply-content {
+    background: rgba(99, 102, 241, 0.15);
+}
+
+html.dark-mode .qibbs-acc-reply-admin .qibbs-acc-reply-content::before,
+.dark-mode .qibbs-acc-reply-admin .qibbs-acc-reply-content::before {
+    border-right-color: rgba(99, 102, 241, 0.15);
+}
+
+html.dark-mode .qibbs-acc-ticket-content,
+.dark-mode .qibbs-acc-ticket-content {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+html.dark-mode .qibbs-acc-empty,
+html.dark-mode .qibbs-acc-no-replies,
+html.dark-mode .qibbs-acc-closed-notice,
+.dark-mode .qibbs-acc-empty,
+.dark-mode .qibbs-acc-no-replies,
+.dark-mode .qibbs-acc-closed-notice {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark-mode .qibbs-acc-checkbox,
+.dark-mode .qibbs-acc-checkbox {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark-mode .qibbs-acc-upload-area,
+.dark-mode .qibbs-acc-upload-area {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
+}
