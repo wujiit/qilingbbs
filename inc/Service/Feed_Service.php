@@ -192,8 +192,8 @@ class Qibbs_Feed_Service {
             $query_params = array( $args['status'] );
             if ( $hot_window > 0 ) {
                 $from_dt = current_datetime();
-                $from_dt->modify( '-' . $hot_window . ' days' );
-                $from_time = $from_dt->format( 'Y-m-d H:i:s' );
+                $from_dt = $from_dt->modify( '-' . $hot_window . ' days' );
+                $from_time = $from_dt ? $from_dt->format( 'Y-m-d H:i:s' ) : current_time( 'mysql' );
                 $where_clause .= ' AND created_at >= %s';
                 $query_params[] = $from_time;
             }

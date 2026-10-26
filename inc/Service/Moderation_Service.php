@@ -680,8 +680,8 @@ class Qibbs_Moderation_Service {
         $posts_table = Qibbs_Database::posts();
         $comments_table = Qibbs_Database::comments();
         $since_dt = current_datetime();
-        $since_dt->modify( '-' . $days . ' days' );
-        $since = $since_dt->format( 'Y-m-d H:i:s' );
+        $since_dt = $since_dt->modify( '-' . $days . ' days' );
+        $since = $since_dt ? $since_dt->format( 'Y-m-d H:i:s' ) : current_time( 'mysql' );
 
         $post_metrics = $wpdb->get_row(
             $wpdb->prepare(

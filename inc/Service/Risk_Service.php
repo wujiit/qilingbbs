@@ -921,8 +921,8 @@ class Qibbs_Risk_Service {
         $window_minutes = max( 1, absint( qibbs_get_option( 'risk_auto_ban_window', 10 ) ) );
 
         $start_dt = current_datetime();
-        $start_dt->modify( '-' . $window_minutes . ' minutes' );
-        $start_time = $start_dt->format( 'Y-m-d H:i:s' );
+        $start_dt = $start_dt->modify( '-' . $window_minutes . ' minutes' );
+        $start_time = $start_dt ? $start_dt->format( 'Y-m-d H:i:s' ) : current_time( 'mysql' );
 
         $blocked_hits = (int) $wpdb->get_var(
             $wpdb->prepare(
@@ -986,8 +986,8 @@ class Qibbs_Risk_Service {
         $duration_minutes = absint( $duration_minutes );
         if ( $duration_minutes > 0 ) {
             $expires_at_dt = current_datetime();
-            $expires_at_dt->modify( '+' . $duration_minutes . ' minutes' );
-            $expires_at = $expires_at_dt->format( 'Y-m-d H:i:s' );
+            $expires_at_dt = $expires_at_dt->modify( '+' . $duration_minutes . ' minutes' );
+            $expires_at = $expires_at_dt ? $expires_at_dt->format( 'Y-m-d H:i:s' ) : null;
         }
 
         $result = $wpdb->insert(
@@ -1191,8 +1191,8 @@ class Qibbs_Risk_Service {
         $action_placeholders = implode( ',', array_fill( 0, count( $risk_moderation_actions ), '%s' ) );
 
         $since_dt = current_datetime();
-        $since_dt->modify( '-' . $days . ' days' );
-        $since = $since_dt->format( 'Y-m-d H:i:s' );
+        $since_dt = $since_dt->modify( '-' . $days . ' days' );
+        $since = $since_dt ? $since_dt->format( 'Y-m-d H:i:s' ) : current_time( 'mysql' );
 
         $risk_logs = $wpdb->get_results(
             $wpdb->prepare(
@@ -1339,8 +1339,8 @@ class Qibbs_Risk_Service {
 
         global $wpdb;
         $since_dt = current_datetime();
-        $since_dt->modify( '-' . $days . ' days' );
-        $since = $since_dt->format( 'Y-m-d H:i:s' );
+        $since_dt = $since_dt->modify( '-' . $days . ' days' );
+        $since = $since_dt ? $since_dt->format( 'Y-m-d H:i:s' ) : current_time( 'mysql' );
 
         $logs_table = Qibbs_Database::get_table( 'risk_logs' );
         $moderation_logs_table = Qibbs_Database::get_table( 'moderation_logs' );
@@ -1446,8 +1446,8 @@ class Qibbs_Risk_Service {
 
         $table = Qibbs_Database::get_table( 'risk_logs' );
         $today_dt = current_datetime();
-        $today_dt->setTime( 0, 0, 0 );
-        $today = $today_dt->format( 'Y-m-d H:i:s' );
+        $today_dt = $today_dt->setTime( 0, 0, 0 );
+        $today = $today_dt ? $today_dt->format( 'Y-m-d H:i:s' ) : current_time( 'mysql' );
 
         $stats = array(
             'hits_today' => (int) $wpdb->get_var(
@@ -1535,8 +1535,8 @@ class Qibbs_Risk_Service {
 
         $days = max( 1, absint( $days ) );
         $threshold_dt = current_datetime();
-        $threshold_dt->modify( '-' . $days . ' days' );
-        $threshold = $threshold_dt->format( 'Y-m-d H:i:s' );
+        $threshold_dt = $threshold_dt->modify( '-' . $days . ' days' );
+        $threshold = $threshold_dt ? $threshold_dt->format( 'Y-m-d H:i:s' ) : current_time( 'mysql' );
 
         return $wpdb->query(
             $wpdb->prepare(

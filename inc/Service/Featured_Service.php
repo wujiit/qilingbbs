@@ -42,8 +42,8 @@ class Qibbs_Featured_Service {
         $featured_until = null;
         if ( $days > 0 ) {
             $expiry_dt = current_datetime();
-            $expiry_dt->modify( '+' . absint( $days ) . ' days' );
-            $featured_until = $expiry_dt->format( 'Y-m-d H:i:s' );
+            $expiry_dt = $expiry_dt->modify( '+' . absint( $days ) . ' days' );
+            $featured_until = $expiry_dt ? $expiry_dt->format( 'Y-m-d H:i:s' ) : null;
         }
         
         $result = $wpdb->update(

@@ -472,7 +472,7 @@ class Qibbs_Dashboard_Service {
      */
     private function get_since_datetime( $modifier ) {
         $date = current_datetime();
-        $date->modify( (string) $modifier );
-        return $date->format( 'Y-m-d H:i:s' );
+        $date = $date->modify( (string) $modifier );
+        return $date ? $date->format( 'Y-m-d H:i:s' ) : current_time( 'mysql' );
     }
 }
