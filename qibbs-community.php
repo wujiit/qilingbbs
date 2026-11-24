@@ -3,7 +3,7 @@
  * Plugin Name: 启灵bbs
  * Plugin URI: https://www.jingxialai.com
  * Description: 启灵主题微社区插件，支持工单系统。
- * Version: 1.8.0
+ * Version: 1.9.0
  * Author: Summer
  * Author URI: https://www.jingxialai.com
  * License: GPL v2 or later
@@ -22,11 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // 插件基础常量定义
-define( 'QIBBS_VERSION', '1.8.0' );
+define( 'QIBBS_VERSION', '1.9.0' );
 define( 'QIBBS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'QIBBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'QIBBS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'QIBBS_DB_VERSION', '1.8.0' );
+define( 'QIBBS_DB_VERSION', '1.9.0' );
 
 // 优先加载全局核心辅助函数库（确保所有底层方法在后续初始化与钩子中始终就绪）
 require_once QIBBS_PLUGIN_DIR . 'inc/Helpers/Option_Helper.php';

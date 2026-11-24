@@ -748,6 +748,102 @@ class Qibbs_Risk_Service {
             return true;
         }
 
+        $engine   = qibbs_get_option( 'risk_content_engine', 'default' );
+        $use_qcs  = ( 'qcs' === $engine && function_exists( 'qiling_content_security_scan_text' ) );
+        $in_scope = false;
+
+        if ( $use_qcs ) {
+            if ( 'post' === $action && qibbs_get_option( 'risk_qcs_scope_post', true ) ) {
+                $in_scope = true;
+            } elseif ( 'comment' === $action && qibbs_get_option( 'risk_qcs_scope_comment', true ) ) {
+                $in_scope = true;
+            } elseif ( 'ticket' === $action && qibbs_get_option( 'risk_qcs_scope_ticket', true ) ) {
+                $in_scope = true;
+            }
+        }
+
+        if ( $use_qcs && $in_scope ) {
+            $qcs_action        = qibbs_get_option( 'risk_qcs_action', 'reject' );
+            $merge_local       = qibbs_get_option( 'risk_qcs_merge_local_keywords', true );
+            $community_matched = array();
+
+            if ( $merge_local ) {
+                $community_matched = self::get_matched_keywords( $plain_content );
+            }
+
+            $scan_result = qiling_content_security_scan_text(
+                $plain_content,
+                array(
+                    'object_type'  => $action,
+                    'object_title' => sprintf( '社区%s (UID:%d)', $action, $user_id ),
+                    'source'       => 'qibbs_' . $action,
+                    'use_remote'   => true,
+                )
+            );
+
+            $is_qcs_blocked   = is_array( $scan_result ) && 'blocked' === $scan_result['status'];
+            $is_qcs_review    = is_array( $scan_result ) && 'review' === $scan_result['status'];
+            $is_community_hit = ! empty( $community_matched );
+
+            if ( $is_qcs_blocked || $is_qcs_review || $is_community_hit ) {
+                $matched_words = array();
+                if ( isset( $scan_result['matches'] ) && is_array( $scan_result['matches'] ) ) {
+                    foreach ( $scan_result['matches'] as $m ) {
+                        if ( is_array( $m ) && ! empty( $m['word'] ) ) {
+                            $matched_words[] = (string) $m['word'];
+                        } elseif ( is_string( $m ) ) {
+                            $matched_words[] = $m;
+                        }
+                    }
+                }
+                if ( ! empty( $community_matched ) ) {
+                    $matched_words = array_merge( $matched_words, $community_matched );
+                }
+                $matched_words = array_values( array_unique( array_filter( $matched_words ) ) );
+
+                $meta = array(
+                    'engine'           => 'qcs',
+                    'qcs_status'       => isset( $scan_result['status'] ) ? $scan_result['status'] : ( $is_community_hit ? 'blocked' : 'safe' ),
+                    'matched_keywords' => $matched_words,
+                    'content_action'   => $action,
+                    'context'          => self::normalize_log_meta( $context ),
+                );
+
+                if ( 'reject' === $qcs_action || $is_qcs_blocked || $is_community_hit ) {
+                    self::insert_log_row(
+                        'content_' . $action,
+                        'blocked',
+                        __( '触发启灵内容安全规则，已被拦截', 'qibbs-community' ),
+                        $meta,
+                        true,
+                        $user_id
+                    );
+
+                    $error_msg = ! empty( $scan_result['message'] )
+                        ? $scan_result['message']
+                        : __( '内容触发安全审查规则，已被拒绝发布。', 'qibbs-community' );
+
+                    return new WP_Error( 'qibbs_qcs_blocked', $error_msg );
+                }
+
+                if ( 'hold' === $qcs_action && $is_qcs_review ) {
+                    self::insert_log_row(
+                        'content_' . $action,
+                        'hold',
+                        __( '内容触发人工复审，转为待审', 'qibbs-community' ),
+                        $meta,
+                        true,
+                        $user_id
+                    );
+
+                    add_filter( 'qibbs_pre_insert_post', array( __CLASS__, 'force_pending_post_status' ) );
+                    add_filter( 'qibbs_comment_pending_override', '__return_true' );
+                }
+            }
+
+            return true;
+        }
+
         $matched_keywords = self::get_matched_keywords( $plain_content );
         if ( empty( $matched_keywords ) ) {
             return true;
@@ -797,7 +893,20 @@ class Qibbs_Risk_Service {
     }
 
     /**
-     * 检查指定 IP 是否已被封禁
+     * 强制将即将入库的帖子状态置为待审核
+     *
+     * @param array $post_data
+     * @return array
+     */
+    public static function force_pending_post_status( $post_data ) {
+        if ( is_array( $post_data ) ) {
+            $post_data['status'] = 'qibbs_pending';
+        }
+        return $post_data;
+    }
+
+    /**
+     * 判断指定 IP 是否被封禁
      *
      * @param string $ip IP address.
      * @return bool

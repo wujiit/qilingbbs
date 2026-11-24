@@ -120,6 +120,9 @@ class Qibbs_Comment_Service {
 
         $table = Qibbs_Database::comments();
         $comment_status = qibbs_get_option( 'auto_approve_posts', true ) ? 'approved' : 'pending';
+        if ( apply_filters( 'qibbs_comment_pending_override', false ) ) {
+            $comment_status = 'pending';
+        }
 
         $result = $wpdb->insert(
             $table,

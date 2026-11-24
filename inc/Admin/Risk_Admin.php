@@ -201,7 +201,66 @@ class Qibbs_Risk_Admin {
                             </tr>
                             <tr>
                                 <th><?php esc_html_e( '启用内容联动风控', 'qibbs-community' ); ?></th>
-                                <td><label><input type="checkbox" name="risk_enable_content_rules" value="1" <?php checked( qibbs_get_option( 'risk_enable_content_rules', false ) ); ?>> <?php esc_html_e( '对发帖、评论、私信、工单启用“关键词 + 频率”联合判断', 'qibbs-community' ); ?></label></td>
+                                <td><label><input type="checkbox" name="risk_enable_content_rules" value="1" <?php checked( qibbs_get_option( 'risk_enable_content_rules', false ) ); ?>> <?php esc_html_e( '对发帖、评论、私信、工单启用内容安全检查', 'qibbs-community' ); ?></label></td>
+                            </tr>
+                            <?php
+                            $has_qcs = function_exists( 'qiling_content_security_scan_text' );
+                            $current_engine = qibbs_get_option( 'risk_content_engine', 'default' );
+                            if ( ! $has_qcs && 'qcs' === $current_engine ) {
+                                $current_engine = 'default';
+                            }
+                            ?>
+                            <tr>
+                                <th><?php esc_html_e( '内容审核引擎', 'qibbs-community' ); ?></th>
+                                <td>
+                                    <fieldset>
+                                        <label style="display:block;margin-bottom:8px;">
+                                            <input type="radio" name="risk_content_engine" value="default" <?php checked( 'default', $current_engine ); ?> onchange="document.querySelectorAll('.qibbs-qcs-options-row').forEach(function(el){el.style.display='none';});">
+                                            <strong><?php esc_html_e( '社区默认基础审查', 'qibbs-community' ); ?></strong>
+                                            <span class="description" style="margin-left:6px;"><?php esc_html_e( '（使用下方文本框关键词 + 发帖频率联合判定）', 'qibbs-community' ); ?></span>
+                                        </label>
+                                        <label style="display:block;margin-bottom:8px;<?php echo ! $has_qcs ? 'color:#8c8f94;' : ''; ?>">
+                                            <input type="radio" name="risk_content_engine" value="qcs" <?php checked( 'qcs', $current_engine ); ?> <?php disabled( ! $has_qcs ); ?> onchange="document.querySelectorAll('.qibbs-qcs-options-row').forEach(function(el){el.style.display='';});">
+                                            <strong><?php esc_html_e( '启灵内容安全插件高级审查（qilingcontentsecurity）', 'qibbs-community' ); ?></strong>
+                                            <?php if ( $has_qcs ) : ?>
+                                                <span style="color:#007017;font-weight:600;margin-left:6px;"><?php esc_html_e( '（已就绪：支持分级词库、符号抗混淆与百度AI审查）', 'qibbs-community' ); ?></span>
+                                            <?php else : ?>
+                                                <span style="color:#d63638;margin-left:6px;"><?php esc_html_e( '（未安装或未激活插件，请先安装启灵内容安全插件）', 'qibbs-community' ); ?></span>
+                                            <?php endif; ?>
+                                        </label>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr class="qibbs-qcs-options-row" style="<?php echo 'qcs' !== $current_engine ? 'display:none;' : ''; ?>">
+                                <th><?php esc_html_e( '高级审查业务范围', 'qibbs-community' ); ?></th>
+                                <td>
+                                    <label style="margin-right:15px;">
+                                        <input type="checkbox" name="risk_qcs_scope_post" value="1" <?php checked( qibbs_get_option( 'risk_qcs_scope_post', true ) ); ?>>
+                                        <?php esc_html_e( '社区动态发帖', 'qibbs-community' ); ?>
+                                    </label>
+                                    <label style="margin-right:15px;">
+                                        <input type="checkbox" name="risk_qcs_scope_comment" value="1" <?php checked( qibbs_get_option( 'risk_qcs_scope_comment', true ) ); ?>>
+                                        <?php esc_html_e( '回帖跟帖评论', 'qibbs-community' ); ?>
+                                    </label>
+                                    <label style="margin-right:15px;">
+                                        <input type="checkbox" name="risk_qcs_scope_ticket" value="1" <?php checked( qibbs_get_option( 'risk_qcs_scope_ticket', true ) ); ?>>
+                                        <?php esc_html_e( '工单与留言反馈', 'qibbs-community' ); ?>
+                                    </label>
+                                    <p class="description"><?php esc_html_e( '勾选的业务场景将接入内容安全插件执行精确审查。', 'qibbs-community' ); ?></p>
+                                </td>
+                            </tr>
+                            <tr class="qibbs-qcs-options-row" style="<?php echo 'qcs' !== $current_engine ? 'display:none;' : ''; ?>">
+                                <th><?php esc_html_e( '高级审查违规处置', 'qibbs-community' ); ?></th>
+                                <td>
+                                    <select name="risk_qcs_action">
+                                        <option value="reject" <?php selected( 'reject', qibbs_get_option( 'risk_qcs_action', 'reject' ) ); ?>><?php esc_html_e( '直接拦截并提示拒绝提交（推荐）', 'qibbs-community' ); ?></option>
+                                        <option value="hold" <?php selected( 'hold', qibbs_get_option( 'risk_qcs_action', 'reject' ) ); ?>><?php esc_html_e( '置为待审核状态（前台隐藏，待后台审核）', 'qibbs-community' ); ?></option>
+                                    </select>
+                                    <label style="margin-left:15px;">
+                                        <input type="checkbox" name="risk_qcs_merge_local_keywords" value="1" <?php checked( qibbs_get_option( 'risk_qcs_merge_local_keywords', true ) ); ?>>
+                                        <?php esc_html_e( '同时合并下方社区自定义关键词作为补充词集', 'qibbs-community' ); ?>
+                                    </label>
+                                </td>
                             </tr>
                             <tr>
                                 <th><?php esc_html_e( '风险关键词', 'qibbs-community' ); ?></th>
@@ -475,6 +534,14 @@ class Qibbs_Risk_Admin {
         $proxy_rules = isset( $_POST['risk_trusted_proxies'] ) ? sanitize_textarea_field( wp_unslash( $_POST['risk_trusted_proxies'] ) ) : '';
         $options['risk_trusted_proxies'] = implode( ',', $this->normalize_proxy_rules( $proxy_rules ) );
         $options['risk_enable_content_rules'] = ! empty( $_POST['risk_enable_content_rules'] );
+        $engine = isset( $_POST['risk_content_engine'] ) ? sanitize_key( wp_unslash( $_POST['risk_content_engine'] ) ) : 'default';
+        $options['risk_content_engine'] = ( 'qcs' === $engine && function_exists( 'qiling_content_security_scan_text' ) ) ? 'qcs' : 'default';
+        $options['risk_qcs_scope_post'] = ! empty( $_POST['risk_qcs_scope_post'] );
+        $options['risk_qcs_scope_comment'] = ! empty( $_POST['risk_qcs_scope_comment'] );
+        $options['risk_qcs_scope_ticket'] = ! empty( $_POST['risk_qcs_scope_ticket'] );
+        $qcs_action = isset( $_POST['risk_qcs_action'] ) ? sanitize_key( wp_unslash( $_POST['risk_qcs_action'] ) ) : 'reject';
+        $options['risk_qcs_action'] = in_array( $qcs_action, array( 'reject', 'hold' ), true ) ? $qcs_action : 'reject';
+        $options['risk_qcs_merge_local_keywords'] = ! empty( $_POST['risk_qcs_merge_local_keywords'] );
         $options['risk_content_keywords'] = isset( $_POST['risk_content_keywords'] ) ? sanitize_textarea_field( wp_unslash( $_POST['risk_content_keywords'] ) ) : '';
         $options['risk_content_frequency_limit'] = max( 2, min( 50, absint( $_POST['risk_content_frequency_limit'] ?? 4 ) ) );
         if ( function_exists( 'qibbs_update_options' ) ) {
